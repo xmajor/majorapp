@@ -1,0 +1,232 @@
+<div class="container">
+  <div class="page-header">
+    <div class="pull-right">
+      <%= link_to 'Back to Dashboard', stats_path, class: 'btn btn-default' %>
+      <%= link_to 'Re-aggregate', aggregate_stats_path(date: @date), method: :post, class: 'btn btn-info' %>
+      <% if StatsAggregatorConfig.google_sheets_enabled? %>
+        <%= link_to 'Export to Sheets', export_to_sheets_stats_path(date: @date), method: :post, class: 'btn btn-success' %>
+      <% end %>
+    </div>
+    <h1>Stats for <%= @date.strftime('%B %d, %Y') %></h1>
+  </div>
+
+  <% if @stat.has_errors? %>
+    <div class="alert alert-warning">
+      <strong>Warning:</strong> Some data sources returned errors:
+      <ul>
+        <% @stat.errors_data.each do |error| %>
+          <li><strong><%= error['source'] %>:</strong> <%= error['error'] %></li>
+        <% end %>
+      </ul>
+    </div>
+  <% end %>
+
+  <!-- Key Metrics -->
+  <div class="row">
+    <div class="col-md-3">
+      <div class="panel panel-primary">
+        <div class="panel-heading">Ad Spend</div>
+        <div class="panel-body text-center">
+          <h2>$<%= number_with_precision(@stat.ad_spend, precision: 2, delimiter: ',') %></h2>
+        </div>
+      </div>
+    </div>
+    <div class="col-md-3">
+      <div class="panel panel-info">
+        <div class="panel-heading">Cost Per Lead</div>
+        <div class="panel-body text-center">
+          <h2>$<%= number_with_precision(@stat.cost_per_lead, precision: 2) %></h2>
+        </div>
+      </div>
+    </div>
+    <div class="col-md-3">
+      <div class="panel panel-success">
+        <div class="panel-heading">Cost Per Booked Call</div>
+        <div class="panel-body text-center">
+          <h2>$<%= number_with_precision(@stat.cost_per_booked_call, precision: 2) %></h2>
+        </div>
+      </div>
+    </div>
+    <div class="col-md-3">
+      <div class="panel panel-warning">
+        <div class="panel-heading">ROAS</div>
+        <div class="panel-body text-center">
+          <h2><%= @stat.roas %>x</h2>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="row">
+    <!-- Ad Performance -->
+    <div class="col-md-6">
+      <div class="panel panel-default">
+        <div class="panel-heading">
+          <h3 class="panel-title"><i class="fa fa-facebook"></i> Ad Performance</h3>
+        </div>
+        <table class="table">
+          <tr>
+            <td>Link CPC</td>
+            <td class="text-right"><strong>$<%= number_with_precision(@stat.link_cpc, precision: 2) %></strong></td>
+          </tr>
+          <tr>
+            <td>Link CTR</td>
+            <td class="text-right"><strong><%= number_with_precision(@stat.link_ctr, precision: 2) %>%</strong></td>
+          </tr>
+          <tr>
+            <td>CPM</td>
+            <td class="text-right"><strong>$<%= number_with_precision(@stat.cpm, precision: 2) %></strong></td>
+          </tr>
+          <tr>
+            <td>Impressions</td>
+            <td class="text-right"><strong><%= number_with_delimiter(@stat.impressions) %></strong></td>
+          </tr>
+          <tr>
+            <td>Unique Impressions</td>
+            <td class="text-right"><strong><%= number_with_delimiter(@stat.unique_impressions) %></strong></td>
+          </tr>
+          <tr>
+            <td>Clicks</td>
+            <td class="text-right"><strong><%= number_with_delimiter(@stat.clicks) %></strong></td>
+          </tr>
+        </table>
+      </div>
+    </div>
+
+    <!-- Lead & Call Metrics -->
+    <div class="col-md-6">
+      <div class="panel panel-default">
+        <div class="panel-heading">
+          <h3 class="panel-title"><i class="fa fa-users"></i> Lead & Call Metrics</h3>
+        </div>
+        <table class="table">
+          <tr>
+            <td>Total Leads</td>
+            <td class="text-right"><strong><%= @stat.total_leads %></strong></td>
+          </tr>
+          <tr>
+            <td>Qualified Leads</td>
+            <td class="text-right"><strong><%= @stat.qualified_leads %></strong></td>
+          </tr>
+          <tr>
+            <td>Booked Calls</td>
+            <td class="text-right"><strong><%= @stat.booked_calls %></strong></td>
+          </tr>
+          <tr>
+            <td>Completed Calls</td>
+            <td class="text-right"><strong><%= @stat.completed_calls %></strong></td>
+          </tr>
+          <tr>
+            <td>Call Show Rate</td>
+            <td class="text-right"><strong><%= number_with_precision(@stat.call_show_rate, precision: 1) %>%</strong></td>
+          </tr>
+          <tr>
+            <td>Application Submissions</td>
+            <td class="text-right"><strong><%= @stat.application_submissions %></strong></td>
+          </tr>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <div class="row">
+    <!-- Page Metrics -->
+    <div class="col-md-6">
+      <div class="panel panel-default">
+        <div class="panel-heading">
+          <h3 class="panel-title"><i class="fa fa-file"></i> Page Metrics (ClickFunnels)</h3>
+        </div>
+        <table class="table">
+          <tr>
+            <td>Page Views</td>
+            <td class="text-right"><strong><%= number_with_delimiter(@stat.page_views) %></strong></td>
+          </tr>
+          <tr>
+            <td>Unique Page Views</td>
+            <td class="text-right"><strong><%= number_with_delimiter(@stat.unique_page_views) %></strong></td>
+          </tr>
+          <tr>
+            <td>Opt-ins</td>
+            <td class="text-right"><strong><%= @stat.opt_ins %></strong></td>
+          </tr>
+        </table>
+      </div>
+    </div>
+
+    <!-- Form Metrics -->
+    <div class="col-md-6">
+      <div class="panel panel-default">
+        <div class="panel-heading">
+          <h3 class="panel-title"><i class="fa fa-wpforms"></i> Form Metrics (Typeform)</h3>
+        </div>
+        <table class="table">
+          <tr>
+            <td>Form Submissions</td>
+            <td class="text-right"><strong><%= @stat.form_submissions %></strong></td>
+          </tr>
+          <tr>
+            <td>Form Completions</td>
+            <td class="text-right"><strong><%= @stat.form_completions %></strong></td>
+          </tr>
+          <tr>
+            <td>Completion Rate</td>
+            <td class="text-right"><strong><%= number_with_precision(@stat.completion_rate, precision: 1) %>%</strong></td>
+          </tr>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <!-- Revenue -->
+  <div class="row">
+    <div class="col-md-12">
+      <div class="panel panel-default">
+        <div class="panel-heading">
+          <h3 class="panel-title"><i class="fa fa-dollar"></i> Revenue Attribution (Hyros)</h3>
+        </div>
+        <div class="panel-body">
+          <div class="row">
+            <div class="col-md-4 text-center">
+              <h4>Attributed Revenue</h4>
+              <h2 class="text-success">$<%= number_with_precision(@stat.attributed_revenue, precision: 2, delimiter: ',') %></h2>
+            </div>
+            <div class="col-md-4 text-center">
+              <h4>Ad Spend</h4>
+              <h2 class="text-danger">$<%= number_with_precision(@stat.ad_spend, precision: 2, delimiter: ',') %></h2>
+            </div>
+            <div class="col-md-4 text-center">
+              <h4>ROAS</h4>
+              <h2 class="text-info"><%= @stat.roas %>x</h2>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Metadata -->
+  <div class="panel panel-default">
+    <div class="panel-heading">
+      <h3 class="panel-title">Record Info</h3>
+    </div>
+    <div class="panel-body">
+      <dl class="dl-horizontal">
+        <dt>Record ID</dt>
+        <dd><%= @stat.id %></dd>
+        <dt>Created At</dt>
+        <dd><%= @stat.created_at.strftime('%Y-%m-%d %H:%M:%S') %></dd>
+        <dt>Updated At</dt>
+        <dd><%= @stat.updated_at.strftime('%Y-%m-%d %H:%M:%S') %></dd>
+        <dt>Exported to Sheets</dt>
+        <dd>
+          <% if @stat.exported_to_sheets %>
+            <span class="label label-success">Yes</span>
+            (<%= @stat.last_exported_at&.strftime('%Y-%m-%d %H:%M') %>)
+          <% else %>
+            <span class="label label-default">No</span>
+          <% end %>
+        </dd>
+      </dl>
+    </div>
+  </div>
+</div>

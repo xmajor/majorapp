@@ -1,0 +1,238 @@
+<div class="container">
+  <div class="page-header">
+    <div class="pull-right">
+      <%= link_to 'Back to Dashboard', stats_path, class: 'btn btn-default' %>
+    </div>
+    <h1>Stats Aggregator Configuration</h1>
+  </div>
+
+  <% if @missing_vars.any? %>
+    <div class="alert alert-warning">
+      <strong>Missing Configuration:</strong> The following environment variables are not set:
+      <ul>
+        <% @missing_vars.each do |var| %>
+          <li><code><%= var %></code></li>
+        <% end %>
+      </ul>
+    </div>
+  <% end %>
+
+  <div class="row">
+    <!-- Facebook Ads -->
+    <div class="col-md-6">
+      <div class="panel <%= @config_status[:facebook][:configured] ? 'panel-success' : 'panel-default' %>">
+        <div class="panel-heading">
+          <h3 class="panel-title">
+            <i class="fa fa-facebook"></i> Facebook Ads Manager
+            <% if @config_status[:facebook][:configured] %>
+              <span class="pull-right label label-success">Configured</span>
+            <% else %>
+              <span class="pull-right label label-default">Not Configured</span>
+            <% end %>
+          </h3>
+        </div>
+        <div class="panel-body">
+          <p>Tracks: Ad Spend, Link CPC, Link CTR, CPM, Impressions, Leads</p>
+          <hr>
+          <h5>Required Environment Variables:</h5>
+          <ul>
+            <li><code>FACEBOOK_ACCESS_TOKEN</code></li>
+            <li><code>FACEBOOK_AD_ACCOUNT_ID</code></li>
+          </ul>
+          <h5>Setup Steps:</h5>
+          <ol>
+            <li>Go to <a href="https://business.facebook.com/settings/system-users" target="_blank">Facebook Business Settings</a></li>
+            <li>Create a System User with <code>ads_read</code> permission</li>
+            <li>Generate and copy the access token</li>
+            <li>Find your Ad Account ID in Ads Manager URL</li>
+          </ol>
+        </div>
+      </div>
+    </div>
+
+    <!-- ClickFunnels -->
+    <div class="col-md-6">
+      <div class="panel <%= @config_status[:clickfunnels][:configured] ? 'panel-success' : 'panel-default' %>">
+        <div class="panel-heading">
+          <h3 class="panel-title">
+            <i class="fa fa-funnel-dollar"></i> ClickFunnels
+            <% if @config_status[:clickfunnels][:configured] %>
+              <span class="pull-right label label-success">Configured</span>
+            <% else %>
+              <span class="pull-right label label-default">Not Configured</span>
+            <% end %>
+          </h3>
+        </div>
+        <div class="panel-body">
+          <p>Tracks: Page Views, Unique Page Views, Opt-ins, Conversions</p>
+          <hr>
+          <h5>Required Environment Variables:</h5>
+          <ul>
+            <li><code>CLICKFUNNELS_API_KEY</code></li>
+            <li><code>CLICKFUNNELS_WORKSPACE_ID</code></li>
+          </ul>
+          <h5>Setup Steps:</h5>
+          <ol>
+            <li>Log in to ClickFunnels</li>
+            <li>Go to Settings &gt; API</li>
+            <li>Generate and copy your API key</li>
+            <li>Note your Workspace ID from the dashboard URL</li>
+          </ol>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="row">
+    <!-- Hyros -->
+    <div class="col-md-6">
+      <div class="panel <%= @config_status[:hyros][:configured] ? 'panel-success' : 'panel-default' %>">
+        <div class="panel-heading">
+          <h3 class="panel-title">
+            <i class="fa fa-chart-line"></i> Hyros
+            <% if @config_status[:hyros][:configured] %>
+              <span class="pull-right label label-success">Configured</span>
+            <% else %>
+              <span class="pull-right label label-default">Not Configured</span>
+            <% end %>
+          </h3>
+        </div>
+        <div class="panel-body">
+          <p>Tracks: Booked Calls, Cost Per Booked Call, Revenue Attribution, ROAS</p>
+          <hr>
+          <h5>Required Environment Variables:</h5>
+          <ul>
+            <li><code>HYROS_API_KEY</code></li>
+          </ul>
+          <h5>Setup Steps:</h5>
+          <ol>
+            <li>Log in to Hyros</li>
+            <li>Go to Settings &gt; API</li>
+            <li>Generate and copy your API key</li>
+          </ol>
+        </div>
+      </div>
+    </div>
+
+    <!-- Typeform -->
+    <div class="col-md-6">
+      <div class="panel <%= @config_status[:typeform][:configured] ? 'panel-success' : 'panel-default' %>">
+        <div class="panel-heading">
+          <h3 class="panel-title">
+            <i class="fa fa-wpforms"></i> Typeform
+            <% if @config_status[:typeform][:configured] %>
+              <span class="pull-right label label-success">Configured</span>
+            <% else %>
+              <span class="pull-right label label-default">Not Configured</span>
+            <% end %>
+          </h3>
+        </div>
+        <div class="panel-body">
+          <p>Tracks: Form Submissions, Completions, Application Submissions</p>
+          <hr>
+          <h5>Required Environment Variables:</h5>
+          <ul>
+            <li><code>TYPEFORM_ACCESS_TOKEN</code></li>
+            <li><code>TYPEFORM_FORM_IDS</code> (comma-separated)</li>
+          </ul>
+          <h5>Setup Steps:</h5>
+          <ol>
+            <li>Go to <a href="https://admin.typeform.com/user/tokens" target="_blank">Typeform Developer Portal</a></li>
+            <li>Create a personal access token</li>
+            <li>Find your form IDs from the form URLs</li>
+          </ol>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="row">
+    <!-- Google Sheets -->
+    <div class="col-md-12">
+      <div class="panel <%= @config_status[:google_sheets][:enabled] ? 'panel-success' : 'panel-default' %>">
+        <div class="panel-heading">
+          <h3 class="panel-title">
+            <i class="fa fa-table"></i> Google Sheets Export
+            <% if @config_status[:google_sheets][:enabled] %>
+              <span class="pull-right label label-success">Configured</span>
+            <% else %>
+              <span class="pull-right label label-default">Not Configured</span>
+            <% end %>
+          </h3>
+        </div>
+        <div class="panel-body">
+          <p>Automatically exports daily stats to a Google Spreadsheet.</p>
+          <hr>
+          <h5>Required:</h5>
+          <ul>
+            <li><code>GOOGLE_CREDENTIALS_PATH</code> - Path to service account JSON file</li>
+            <li><code>GOOGLE_SPREADSHEET_ID</code> - ID from your spreadsheet URL</li>
+          </ul>
+          <h5>Setup Steps:</h5>
+          <ol>
+            <li>Go to <a href="https://console.cloud.google.com" target="_blank">Google Cloud Console</a></li>
+            <li>Create a new project or select existing one</li>
+            <li>Enable Google Sheets API and Google Drive API</li>
+            <li>Create a Service Account and download JSON credentials</li>
+            <li>Place the JSON file at <code>config/google_credentials.json</code></li>
+            <li>Create a Google Spreadsheet and share it with the service account email</li>
+            <li>Set <code>GOOGLE_SPREADSHEET_ID</code> from the spreadsheet URL</li>
+          </ol>
+          <% if @config_status[:google_sheets][:spreadsheet_id].present? %>
+            <hr>
+            <p>
+              <strong>Current Spreadsheet:</strong>
+              <a href="https://docs.google.com/spreadsheets/d/<%= @config_status[:google_sheets][:spreadsheet_id] %>" target="_blank">
+                Open in Google Sheets
+              </a>
+            </p>
+          <% end %>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Quick Commands -->
+  <div class="panel panel-info">
+    <div class="panel-heading">
+      <h3 class="panel-title">Quick Commands</h3>
+    </div>
+    <div class="panel-body">
+      <h5>Rake Tasks:</h5>
+      <pre>
+# Aggregate yesterday's stats
+rake stats:aggregate
+
+# Aggregate specific date
+rake stats:aggregate[2024-01-15]
+
+# Run full daily aggregation (DB + CSV + Sheets)
+rake stats:daily
+
+# Export to CSV
+rake stats:export_csv
+
+# Export to Google Sheets
+rake stats:export_sheets
+
+# Backfill date range
+rake stats:backfill[2024-01-01,2024-01-31]
+
+# View summary
+rake stats:summary[2024-01-01,2024-01-31]
+      </pre>
+
+      <h5>Setup Cron (using Whenever gem):</h5>
+      <pre>
+# Preview crontab
+whenever
+
+# Update crontab
+whenever --update-crontab
+
+# Clear crontab
+whenever --clear-crontab
+      </pre>
+    </div>
+  </div>
+</div>

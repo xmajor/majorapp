@@ -50,3 +50,9 @@ gem 'twitter-bootstrap-rails', :git => 'git://github.com/seyhunak/twitter-bootst
 gem "font-awesome-rails"
 
 gem 'simple_form'
+
+# Daily Stats Aggregator dependencies
+gem 'httparty'           # HTTP client for API requests
+gem 'google_drive'       # Google Sheets integration
+gem 'dotenv-rails'       # Environment variable management
+gem 'whenever', require: false  # Cron job scheduling

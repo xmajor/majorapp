@@ -1,0 +1,143 @@
+<div class="container">
+  <div class="page-header">
+    <h1>Daily Stats Dashboard</h1>
+  </div>
+
+  <!-- Date Range Filter -->
+  <div class="panel panel-default">
+    <div class="panel-body">
+      <%= form_tag stats_path, method: :get, class: 'form-inline' do %>
+        <div class="form-group">
+          <%= label_tag :start_date, 'From:', class: 'sr-only' %>
+          <%= date_field_tag :start_date, @start_date, class: 'form-control' %>
+        </div>
+        <div class="form-group">
+          <%= label_tag :end_date, 'To:', class: 'sr-only' %>
+          <%= date_field_tag :end_date, @end_date, class: 'form-control' %>
+        </div>
+        <%= submit_tag 'Filter', class: 'btn btn-primary' %>
+        <%= link_to 'Export CSV', export_stats_path(start_date: @start_date, end_date: @end_date, format: :csv), class: 'btn btn-success' %>
+        <%= link_to 'Aggregate Today', aggregate_stats_path, class: 'btn btn-info', method: :post %>
+      <% end %>
+    </div>
+  </div>
+
+  <!-- Summary Cards -->
+  <div class="row">
+    <div class="col-md-3">
+      <div class="panel panel-primary">
+        <div class="panel-heading">
+          <h4 class="panel-title">Total Ad Spend</h4>
+        </div>
+        <div class="panel-body">
+          <h2>$<%= number_with_precision(@totals[:total_ad_spend], precision: 2, delimiter: ',') %></h2>
+        </div>
+      </div>
+    </div>
+    <div class="col-md-3">
+      <div class="panel panel-success">
+        <div class="panel-heading">
+          <h4 class="panel-title">Total Leads</h4>
+        </div>
+        <div class="panel-body">
+          <h2><%= number_with_delimiter(@totals[:total_leads]) %></h2>
+          <small>Avg CPL: $<%= number_with_precision(@totals[:avg_cpl], precision: 2) %></small>
+        </div>
+      </div>
+    </div>
+    <div class="col-md-3">
+      <div class="panel panel-info">
+        <div class="panel-heading">
+          <h4 class="panel-title">Booked Calls</h4>
+        </div>
+        <div class="panel-body">
+          <h2><%= number_with_delimiter(@totals[:total_booked_calls]) %></h2>
+          <small>Avg CPBC: $<%= number_with_precision(@totals[:avg_cpbc], precision: 2) %></small>
+        </div>
+      </div>
+    </div>
+    <div class="col-md-3">
+      <div class="panel panel-warning">
+        <div class="panel-heading">
+          <h4 class="panel-title">Applications</h4>
+        </div>
+        <div class="panel-body">
+          <h2><%= number_with_delimiter(@totals[:total_applications]) %></h2>
+          <small>Avg ROAS: <%= @totals[:avg_roas] %>x</small>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Daily Stats Table -->
+  <div class="panel panel-default">
+    <div class="panel-heading">
+      <h3 class="panel-title">Daily Breakdown (<%= @stats.count %> days)</h3>
+    </div>
+    <div class="table-responsive">
+      <table class="table table-striped table-hover">
+        <thead>
+          <tr>
+            <th>Date</th>
+            <th>Ad Spend</th>
+            <th>Link CPC</th>
+            <th>Link CTR</th>
+            <th>CPM</th>
+            <th>CPL</th>
+            <th>CPBC</th>
+            <th>Unique Impr.</th>
+            <th>Applications</th>
+            <th>Actions</th>
+          </tr>
+        </thead>
+        <tbody>
+          <% @stats.each do |stat| %>
+            <tr class="<%= 'warning' if stat.has_errors? %>">
+              <td><%= link_to stat.date, stat_path(date: stat.date) %></td>
+              <td>$<%= number_with_precision(stat.ad_spend, precision: 2) %></td>
+              <td>$<%= number_with_precision(stat.link_cpc, precision: 2) %></td>
+              <td><%= number_with_precision(stat.link_ctr, precision: 2) %>%</td>
+              <td>$<%= number_with_precision(stat.cpm, precision: 2) %></td>
+              <td>$<%= number_with_precision(stat.cost_per_lead, precision: 2) %></td>
+              <td>$<%= number_with_precision(stat.cost_per_booked_call, precision: 2) %></td>
+              <td><%= number_with_delimiter(stat.unique_impressions) %></td>
+              <td><%= stat.application_submissions %></td>
+              <td>
+                <%= link_to 'View', stat_path(date: stat.date), class: 'btn btn-xs btn-default' %>
+                <% if stat.has_errors? %>
+                  <span class="label label-warning" title="<%= stat.errors_data.map { |e| e['error'] }.join(', ') %>">
+                    <i class="fa fa-exclamation-triangle"></i>
+                  </span>
+                <% end %>
+              </td>
+            </tr>
+          <% end %>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- Configuration Status -->
+  <div class="panel panel-default">
+    <div class="panel-heading">
+      <h3 class="panel-title">Data Sources Status</h3>
+    </div>
+    <div class="panel-body">
+      <div class="row">
+        <% @config_status.each do |source, status| %>
+          <div class="col-md-2">
+            <div class="text-center">
+              <% if status[:configured] %>
+                <span class="text-success"><i class="fa fa-check-circle fa-2x"></i></span>
+              <% else %>
+                <span class="text-muted"><i class="fa fa-times-circle fa-2x"></i></span>
+              <% end %>
+              <p><strong><%= source.to_s.titleize %></strong></p>
+            </div>
+          </div>
+        <% end %>
+      </div>
+      <%= link_to 'View Configuration', configuration_stats_path, class: 'btn btn-default btn-sm' %>
+    </div>
+  </div>
+</div>

@@ -3,6 +3,17 @@ Rails.application.routes.draw do
 
   get 'pages/home'
 
+  # Stats Aggregator routes
+  resources :stats, only: [:index] do
+    collection do
+      get :export, defaults: { format: :csv }
+      post :aggregate
+      get :configuration
+      post :export_to_sheets
+    end
+  end
+  get 'stats/:date', to: 'stats#show', as: :stat, constraints: { date: /\d{4}-\d{2}-\d{2}/ }
+
   # The priority is based upon order of creation: first created -> highest priority.
   # See how all your routes lay out with "rake routes".
 
