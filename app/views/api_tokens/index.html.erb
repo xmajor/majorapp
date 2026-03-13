@@ -1,0 +1,42 @@
+<div class="page-header">
+  <h1>API Tokens</h1>
+</div>
+
+<% if notice %>
+  <div class="alert alert-success"><%= notice %></div>
+<% end %>
+
+<%= link_to 'New Token', new_api_token_path, class: 'btn btn-primary' %>
+
+<table class="table table-striped" style="margin-top: 20px;">
+  <thead>
+    <tr>
+      <th>Name</th>
+      <th>Token</th>
+      <th>Last Used</th>
+      <th>Created</th>
+      <th>Actions</th>
+    </tr>
+  </thead>
+  <tbody>
+    <% @api_tokens.each do |token| %>
+      <tr>
+        <td><%= token.name %></td>
+        <td>
+          <code><%= token.token %></code>
+        </td>
+        <td><%= token.last_used_at ? time_ago_in_words(token.last_used_at) + ' ago' : 'Never' %></td>
+        <td><%= token.created_at.strftime('%Y-%m-%d') %></td>
+        <td>
+          <%= button_to 'Regenerate', regenerate_api_token_path(token), method: :post, class: 'btn btn-xs btn-warning', data: { confirm: 'Are you sure? The old token will stop working.' } %>
+          <%= button_to 'Revoke', api_token_path(token), method: :delete, class: 'btn btn-xs btn-danger', data: { confirm: 'Are you sure? This will permanently revoke the token.' } %>
+        </td>
+      </tr>
+    <% end %>
+    <% if @api_tokens.empty? %>
+      <tr>
+        <td colspan="5" class="text-center text-muted">No tokens yet. Create one to get started.</td>
+      </tr>
+    <% end %>
+  </tbody>
+</table>
