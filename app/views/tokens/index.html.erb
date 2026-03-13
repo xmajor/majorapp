@@ -1,0 +1,31 @@
+<h1>API Tokens</h1>
+
+<% if notice %>
+  <div class="alert alert-success"><%= notice %></div>
+<% end %>
+
+<table class="table">
+  <thead>
+    <tr>
+      <th>Token</th>
+      <th>Description</th>
+      <th>Created At</th>
+      <th>Actions</th>
+    </tr>
+  </thead>
+  <tbody>
+    <% @tokens.each do |token| %>
+      <tr>
+        <td><code><%= token.token %></code></td>
+        <td><%= token.description %></td>
+        <td><%= token.created_at.strftime('%Y-%m-%d %H:%M') %></td>
+        <td>
+          <%= link_to 'Delete', token_path(token), method: :delete,
+              data: { confirm: 'Are you sure?' }, class: 'btn btn-danger btn-xs' %>
+        </td>
+      </tr>
+    <% end %>
+  </tbody>
+</table>
+
+<%= link_to 'Generate New Token', new_token_path, class: 'btn btn-primary' %>

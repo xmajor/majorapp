@@ -1,0 +1,8 @@
+<h1>Generate New Token</h1>
+
+<%= simple_form_for @token do |f| %>
+  <%= f.input :description, placeholder: 'Token description (optional)' %>
+  <%= f.submit 'Generate Token', class: 'btn btn-primary' %>
+<% end %>
+
+<%= link_to 'Back', tokens_path %>
