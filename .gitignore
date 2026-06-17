@@ -15,3 +15,19 @@
 /log/*
 !/log/.keep
 /tmp
+
+# Python cache
+__pycache__/
+*.pyc
+
+# Agent secrets
+.env
+
+# Agent runtime state (keep suppression template, ignore everything else)
+state/*.jsonl
+state/contacted.json
+state/last_run.json
+state/posts_*.json
+state/engagers_*.json
+state/tier_a_*.json
+state/tier_b_*.json

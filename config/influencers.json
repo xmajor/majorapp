@@ -1,0 +1,182 @@
+[
+  {
+    "id": "jeb_blount",
+    "name": "Jeb Blount",
+    "linkedin_url": "https://www.linkedin.com/in/jebblount/",
+    "niche": "sales prospecting, fanatical prospecting, pipeline generation",
+    "why_icp": "His audience is AEs, SDRs, and sales managers actively working on pipeline. High engagement = high intent.",
+    "typical_post_topics": ["cold calling", "prospecting habits", "rejection resilience", "pipeline discipline"],
+    "follower_tier": "mega"
+  },
+  {
+    "id": "anthony_iannarino",
+    "name": "Anthony Iannarino",
+    "linkedin_url": "https://www.linkedin.com/in/iannarino/",
+    "niche": "B2B sales process, consultative selling, sales leadership",
+    "why_icp": "Posts to sales leaders and VPs. Audience skews toward decision-makers in mid-market B2B.",
+    "typical_post_topics": ["deal strategy", "sales leadership", "consultative selling", "sales process"],
+    "follower_tier": "mega"
+  },
+  {
+    "id": "mark_hunter",
+    "name": "Mark Hunter (The Sales Hunter)",
+    "linkedin_url": "https://www.linkedin.com/in/markhunter/",
+    "niche": "price and value selling, prospecting, sales mindset",
+    "why_icp": "Strong VP of Sales + Director audience. Posts trigger high engagement from managers.",
+    "typical_post_topics": ["pricing conversations", "value selling", "prospecting mindset", "closing"],
+    "follower_tier": "mega"
+  },
+  {
+    "id": "josh_braun",
+    "name": "Josh Braun",
+    "linkedin_url": "https://www.linkedin.com/in/joshbraun/",
+    "niche": "cold outreach, messaging frameworks, SDR/AE coaching",
+    "why_icp": "His exact audience is SDR managers, sales trainers, and sales ops leaders building outbound engines.",
+    "typical_post_topics": ["cold email teardowns", "objection handling", "outreach frameworks", "SDR coaching"],
+    "follower_tier": "large"
+  },
+  {
+    "id": "morgan_ingram",
+    "name": "Morgan J Ingram",
+    "linkedin_url": "https://www.linkedin.com/in/morganjingram/",
+    "niche": "SDR development, sales execution, personal brand for sellers",
+    "why_icp": "Heavy engagement from sales managers building BDR/SDR teams. Strong signal for hiring intent.",
+    "typical_post_topics": ["SDR team building", "daily habits", "video prospecting", "ramp playbooks"],
+    "follower_tier": "large"
+  },
+  {
+    "id": "kevin_dorsey",
+    "name": "Kevin \"KD\" Dorsey",
+    "linkedin_url": "https://www.linkedin.com/in/kvndorsey/",
+    "niche": "sales leadership, coaching culture, VP of Sales playbooks",
+    "why_icp": "Highly targeted audience of VP Sales and CROs at Series A–C SaaS companies. Best Tier A source.",
+    "typical_post_topics": ["coaching frameworks", "1:1 structures", "rep development", "CRO strategy"],
+    "follower_tier": "large"
+  },
+  {
+    "id": "john_barrows",
+    "name": "John Barrows",
+    "linkedin_url": "https://www.linkedin.com/in/johnbarrows/",
+    "niche": "B2B sales training, enterprise selling, sales methodology",
+    "why_icp": "Trains reps and managers at enterprise + mid-market SaaS. Audience matches SalesKick ICP closely.",
+    "typical_post_topics": ["sales methodology", "discovery calls", "deal negotiation", "sales training ROI"],
+    "follower_tier": "large"
+  },
+  {
+    "id": "becc_holland",
+    "name": "Becc Holland",
+    "linkedin_url": "https://www.linkedin.com/in/beccholland/",
+    "niche": "cold calling, personalization at scale, outbound strategy",
+    "why_icp": "Her audience is heads of sales and sales enablement leads at B2B SaaS. Very high-quality engagers.",
+    "typical_post_topics": ["cold call frameworks", "personalization", "outbound strategy", "messaging"],
+    "follower_tier": "large"
+  },
+  {
+    "id": "nick_cegelski",
+    "name": "Nick Cegelski",
+    "linkedin_url": "https://www.linkedin.com/in/nickcegelski/",
+    "niche": "30 Minutes to President's Club, tactical sales skills",
+    "why_icp": "Highly tactical posts attract hungry AEs and managers who want to coach their teams. Strong engagement signals.",
+    "typical_post_topics": ["objection handling scripts", "cold call tactics", "deal momentum", "discovery techniques"],
+    "follower_tier": "large"
+  },
+  {
+    "id": "scott_barker",
+    "name": "Scott Barker",
+    "linkedin_url": "https://www.linkedin.com/in/scott-barker-tech/",
+    "niche": "GTM strategy, revenue leadership, sales and marketing alignment",
+    "why_icp": "CRO and VP Sales audience at growth-stage B2B SaaS. Posts about GTM execution = hiring/scaling intent.",
+    "typical_post_topics": ["GTM strategy", "revenue operations", "sales and marketing alignment", "pipeline generation"],
+    "follower_tier": "large"
+  },
+  {
+    "id": "lori_richardson",
+    "name": "Lori Richardson",
+    "linkedin_url": "https://www.linkedin.com/in/loririchardson/",
+    "niche": "B2B sales leadership, women in sales, sales team building",
+    "why_icp": "Posts reach sales VPs and directors at SMB-to-mid-market B2B. Engagement quality is high.",
+    "typical_post_topics": ["sales culture", "hiring and retention", "coaching", "women in sales leadership"],
+    "follower_tier": "large"
+  },
+  {
+    "id": "todd_caponi",
+    "name": "Todd Caponi",
+    "linkedin_url": "https://www.linkedin.com/in/toddcaponi/",
+    "niche": "transparency selling, buyer trust, sales history",
+    "why_icp": "His audience of sales leaders and VPs engaged with transparency/trust posts signals buyers struggling with credibility gaps.",
+    "typical_post_topics": ["transparency selling", "buyer psychology", "sales process", "trust in selling"],
+    "follower_tier": "mid"
+  },
+  {
+    "id": "ralph_barsi",
+    "name": "Ralph Barsi",
+    "linkedin_url": "https://www.linkedin.com/in/ralphbarsi/",
+    "niche": "SDR leadership, pipeline planning, inside sales excellence",
+    "why_icp": "Specific to SDR managers and sales operations. Strong source for managers building/scaling SDR teams.",
+    "typical_post_topics": ["SDR team management", "pipeline coverage", "quota planning", "inside sales"],
+    "follower_tier": "mid"
+  },
+  {
+    "id": "collin_cadmus",
+    "name": "Collin Cadmus",
+    "linkedin_url": "https://www.linkedin.com/in/collincadmus/",
+    "niche": "SaaS sales leadership, CRO perspective, team building",
+    "why_icp": "Former CRO with opinionated content that attracts current CROs and VP Sales at SaaS companies.",
+    "typical_post_topics": ["SaaS revenue", "sales leadership philosophy", "hiring AEs", "quota design"],
+    "follower_tier": "mid"
+  },
+  {
+    "id": "jake_dunlap",
+    "name": "Jake Dunlap",
+    "linkedin_url": "https://www.linkedin.com/in/jakedunlap/",
+    "niche": "modern sales process, tech-enabled selling, sales transformation",
+    "why_icp": "Posts attract sales leaders modernizing their stack and process — strong hiring + transformation signals.",
+    "typical_post_topics": ["sales technology", "process design", "sales transformation", "AI in sales"],
+    "follower_tier": "mid"
+  },
+  {
+    "id": "ryan_reisert",
+    "name": "Ryan Reisert",
+    "linkedin_url": "https://www.linkedin.com/in/ryanreisert/",
+    "niche": "sales math, pipeline metrics, outbound ROI",
+    "why_icp": "Data-driven sales leader audience. Posts attract RevOps and VP Sales who think in numbers — high ICP density.",
+    "typical_post_topics": ["pipeline math", "connect rates", "outbound metrics", "sales data"],
+    "follower_tier": "mid"
+  },
+  {
+    "id": "david_dulany",
+    "name": "David Dulany",
+    "linkedin_url": "https://www.linkedin.com/in/daviddulany/",
+    "niche": "SDR function building, sales development, inside sales ops",
+    "why_icp": "His audience is sales development leaders building or rebuilding SDR orgs — direct ICP for ramp/training.",
+    "typical_post_topics": ["SDR org design", "sales development strategy", "prospecting playbooks", "SDR coaching"],
+    "follower_tier": "mid"
+  },
+  {
+    "id": "aaron_ross",
+    "name": "Aaron Ross",
+    "linkedin_url": "https://www.linkedin.com/in/aaronross/",
+    "niche": "Predictable Revenue, outbound prospecting systems, scaling sales",
+    "why_icp": "Author of Predictable Revenue — his audience is sales leaders trying to build repeatable outbound. Prime ICP.",
+    "typical_post_topics": ["outbound systems", "predictable revenue", "sales team scaling", "specialization"],
+    "follower_tier": "large"
+  },
+  {
+    "id": "andy_paul",
+    "name": "Andy Paul",
+    "linkedin_url": "https://www.linkedin.com/in/realandypaul/",
+    "niche": "buyer-centric selling, sales coaching, revenue leadership",
+    "why_icp": "His audience spans sales managers and VPs who want to improve buyer experience and coaching culture.",
+    "typical_post_topics": ["buyer experience", "sales coaching culture", "leadership", "sales philosophy"],
+    "follower_tier": "large"
+  },
+  {
+    "id": "kyle_coleman",
+    "name": "Kyle Coleman",
+    "linkedin_url": "https://www.linkedin.com/in/kyle-coleman/",
+    "niche": "AI-powered sales, GTM strategy, growth leadership",
+    "why_icp": "VP Sales and CRO audience interested in scaling with AI and modern GTM. High engagement = high decision-maker density.",
+    "typical_post_topics": ["AI in sales", "GTM execution", "pipeline strategy", "sales productivity"],
+    "follower_tier": "large"
+  }
+]

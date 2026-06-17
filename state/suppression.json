@@ -1,0 +1,4 @@
+{
+  "_comment": "Pre-load with existing customers, open opps, and competitors before first run. URLs are normalized (lowercase, no trailing slash).",
+  "urls": []
+}

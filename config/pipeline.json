@@ -1,0 +1,73 @@
+{
+  "_comment": "Pipeline configuration. Fill all TODO values before first run.",
+
+  "apify": {
+    "_comment": "Confirm actor slugs against https://apify.com/store before running.",
+    "actors": {
+      "post_scraper":    "curious_coder/linkedin-post-scraper",
+      "engager_scraper": "curious_coder/linkedin-post-reactions",
+      "profile_scraper": "apify/linkedin-profile-scraper"
+    },
+    "days_back":              7,
+    "max_posts_per_profile":  10,
+    "max_engagers_per_post":  500,
+    "min_post_engagement":    10,
+    "actor_timeout_secs":     300,
+    "profile_batch_size":     50
+  },
+
+  "heyreach": {
+    "_comment": "Create campaigns in HeyReach UI first, then paste the IDs below.",
+    "campaign_id_tier_a": "TODO_HEYREACH_CAMPAIGN_ID_TIER_A",
+    "campaign_id_tier_b": "TODO_HEYREACH_CAMPAIGN_ID_TIER_B",
+    "list_id":            "TODO_HEYREACH_LIST_ID",
+    "daily_cap_tier_a":   10,
+    "daily_cap_tier_b":   25,
+    "operations": {
+      "_comment": "Verify paths against HeyReach API docs (Settings > API) before running.",
+      "add_lead_to_list":   "POST /api/v1/lists/{list_id}/leads",
+      "add_lead_to_campaign": "POST /api/v1/campaigns/{campaign_id}/leads",
+      "get_inbox":          "GET /api/v1/inbox/messages",
+      "send_message":       "POST /api/v1/inbox/messages",
+      "reply_to_message":   "POST /api/v1/inbox/messages/{message_id}/reply",
+      "stop_sequence":      "POST /api/v1/campaigns/{campaign_id}/leads/{lead_id}/stop"
+    },
+    "base_url": "https://api.heyreach.io"
+  },
+
+  "inbox": {
+    "poll_interval_hours": 2,
+    "opt_out_keywords": [
+      "stop", "unsubscribe", "remove me", "remove from your list",
+      "not interested", "don't contact", "do not contact",
+      "leave me alone", "take me off", "opt out", "opt-out"
+    ],
+    "booking_confirm_keywords": [
+      "just booked", "booked a time", "calendar invite", "calendly",
+      "confirmed the meeting", "see you then"
+    ]
+  },
+
+  "booking": {
+    "link": "TODO_BOOKING_LINK"
+  },
+
+  "state": {
+    "suppression_file":   "state/suppression.json",
+    "contacted_file":     "state/contacted.json",
+    "audit_log_file":     "state/audit_log.jsonl",
+    "scored_log_file":    "state/scored.jsonl",
+    "meetings_file":      "state/meetings.jsonl",
+    "escalations_file":   "state/escalations.jsonl",
+    "referrals_file":     "state/referrals.jsonl",
+    "last_run_file":      "state/last_run.json"
+  },
+
+  "limits": {
+    "_comment": "Hard rate limits — agent must not exceed these regardless of queue size.",
+    "max_apify_actor_runs_per_day": 10,
+    "max_heyreach_enrollments_per_day": 35,
+    "max_heyreach_replies_per_hour": 20,
+    "max_profile_scrapes_per_run": 200
+  }
+}

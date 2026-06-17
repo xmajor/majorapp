@@ -1,0 +1,259 @@
+{
+  "_comment": "SalesKick ICP scoring model — applied deterministically by scripts/score.py. Edit here, not in code.",
+  "version": "1.0",
+
+  "gates": {
+    "_comment": "Hard filters — ALL must pass or lead is discarded (tier=null, score=0).",
+    "title_keywords": [
+      "vp of sales", "vp sales", "vice president of sales", "vice president sales",
+      "head of sales", "head of revenue",
+      "director of sales", "sales director", "commercial director",
+      "chief revenue officer", "cro",
+      "vp of revenue", "vp revenue",
+      "revenue operations", "revops", "head of revops",
+      "sales manager", "regional sales manager", "area sales manager",
+      "director of revenue", "revenue director",
+      "chief sales officer"
+    ],
+    "excluded_title_keywords": [
+      "recruiter", "talent acquisition", "hr ", "human resources",
+      "software engineer", "developer", "designer",
+      "marketing coordinator", "social media",
+      "student", "intern", "freelance"
+    ],
+    "min_employees": 10,
+    "max_employees": 500,
+    "allowed_industries": [
+      "software", "saas", "technology", "information technology",
+      "fintech", "hrtech", "hr tech", "martech",
+      "professional services", "consulting", "management consulting",
+      "b2b", "enterprise software", "cloud computing",
+      "edtech", "legaltech", "proptech", "insurtech"
+    ],
+    "excluded_industries": [
+      "staffing", "recruiting agency", "multilevel marketing", "mlm",
+      "cryptocurrency", "gambling", "adult entertainment",
+      "retail", "food & beverage", "hospitality"
+    ]
+  },
+
+  "fit_dimensions": {
+    "_comment": "Each dimension contributes up to its max_points. Max raw fit score = 15.",
+
+    "title_seniority": {
+      "max_points": 4,
+      "signal_id": "fit_title_seniority",
+      "rules": [
+        {
+          "label": "c_suite_vp",
+          "match_any": ["cro", "chief revenue", "chief sales", "vp sales", "vp of sales", "vp revenue", "head of sales", "head of revenue"],
+          "points": 4
+        },
+        {
+          "label": "director",
+          "match_any": ["director of sales", "sales director", "commercial director", "director of revenue"],
+          "points": 3
+        },
+        {
+          "label": "manager",
+          "match_any": ["sales manager", "regional sales manager", "area sales manager", "revops", "revenue operations"],
+          "points": 2
+        }
+      ]
+    },
+
+    "company_size": {
+      "max_points": 3,
+      "signal_id": "fit_company_size",
+      "rules": [
+        { "label": "sweet_spot",   "range": [51, 200],  "points": 3 },
+        { "label": "upper_mid",    "range": [201, 500], "points": 2 },
+        { "label": "early_stage",  "range": [10, 50],   "points": 1 }
+      ]
+    },
+
+    "tech_stack": {
+      "max_points": 3,
+      "signal_id": "fit_tech_stack",
+      "_note": "Inferred from LinkedIn company page, job postings, or BuiltWith.",
+      "rules": [
+        {
+          "label": "sales_stack_full",
+          "match_any": ["salesforce", "hubspot crm", "salesloft", "outreach.io", "gong", "chorus"],
+          "points": 3
+        },
+        {
+          "label": "crm_only",
+          "match_any": ["crm", "sales engagement", "revenue intelligence", "pipedrive", "zoho crm"],
+          "points": 2
+        },
+        {
+          "label": "manual_or_spreadsheet",
+          "match_any": ["excel", "spreadsheet", "google sheets", "manual tracking"],
+          "points": 1
+        }
+      ]
+    },
+
+    "funding_stage": {
+      "max_points": 3,
+      "signal_id": "fit_funding_stage",
+      "rules": [
+        {
+          "label": "growth_round",
+          "match_any": ["series a", "series b", "series c"],
+          "points": 3
+        },
+        {
+          "label": "early_round",
+          "match_any": ["seed", "pre-seed", "angel round"],
+          "points": 2
+        },
+        {
+          "label": "bootstrapped_or_profitable",
+          "match_any": ["bootstrapped", "self-funded", "profitable", "private"],
+          "points": 1
+        }
+      ]
+    },
+
+    "icp_engagement_quality": {
+      "max_points": 2,
+      "signal_id": "fit_engagement_quality",
+      "_note": "How they engaged with the influencer post.",
+      "rules": [
+        {
+          "label": "commented",
+          "match_any": ["commented"],
+          "points": 2
+        },
+        {
+          "label": "liked_only",
+          "match_any": ["liked", "reacted"],
+          "points": 1
+        }
+      ]
+    }
+  },
+
+  "triggers": {
+    "_comment": "High-intent bonus signals. Max bonus = sum of all item bonuses (do not exceed max_total_bonus).",
+    "max_total_bonus": 15,
+    "items": [
+      {
+        "id": "signal_post_about_sales_training",
+        "bonus": 5,
+        "description": "The influencer post they engaged with is explicitly about sales coaching, training, or methodology."
+      },
+      {
+        "id": "signal_post_about_quota_miss",
+        "bonus": 5,
+        "description": "Lead or the post they engaged with mentions quota attainment struggles, missed targets, or revenue gaps."
+      },
+      {
+        "id": "signal_post_about_ramp_time",
+        "bonus": 4,
+        "description": "Lead or post mentions AE ramp time, onboarding new reps, or rep productivity."
+      },
+      {
+        "id": "signal_engaged_with_sales_training_content",
+        "bonus": 3,
+        "description": "Lead left a comment (not just a like) on a sales training post — higher intent."
+      },
+      {
+        "id": "signal_company_recently_funded",
+        "bonus": 4,
+        "description": "Company raised a funding round within the last 90 days (Crunchbase / TechCrunch)."
+      },
+      {
+        "id": "signal_company_hiring_sales_reps",
+        "bonus": 5,
+        "description": "Company has active AE, SDR, or BDR job postings on LinkedIn Jobs."
+      },
+      {
+        "id": "signal_rep_turnover_signal",
+        "bonus": 3,
+        "description": "Multiple recent AE job postings, or lead's posts/comments indicate rep churn or team rebuilding."
+      },
+      {
+        "id": "signal_recent_leadership_change",
+        "bonus": 3,
+        "description": "Lead started current sales leadership role less than 6 months ago."
+      },
+      {
+        "id": "signal_competitor_user",
+        "bonus": 2,
+        "description": "Company uses a direct competitor's sales training or enablement product."
+      }
+    ]
+  },
+
+  "scoring": {
+    "max_fit_score":     15,
+    "max_trigger_bonus": 15,
+    "max_total_score":   30,
+
+    "tier_thresholds": {
+      "tier_a":         22,
+      "tier_b_min":     14,
+      "tier_b_max":     21,
+      "no_contact_max": 13
+    },
+
+    "confidence_levels": {
+      "high":   "Signal verified from structured public data (LinkedIn, Crunchbase, company site).",
+      "medium": "Signal inferred from post text, job title, or unstructured mentions.",
+      "low":    "Limited data — signal assumed absent or unknown."
+    },
+
+    "confidence_cap_rule": "If 2 or more fit dimensions are marked low confidence, cap tier at B and flag for review."
+  },
+
+  "tiers": {
+    "A": {
+      "description": "High-fit + high-intent. Immediate personalized outreach.",
+      "heyreach_campaign_key": "campaign_id_tier_a",
+      "daily_cap_key":         "daily_cap_tier_a",
+      "personalization":       "required — must reference influencer + matched angle hook"
+    },
+    "B": {
+      "description": "Good fit, moderate intent. Semi-personalized sequence.",
+      "heyreach_campaign_key": "campaign_id_tier_b",
+      "daily_cap_key":         "daily_cap_tier_b",
+      "personalization":       "preferred — reference influencer niche at minimum"
+    }
+  },
+
+  "angles": {
+    "pain_ramp_time": {
+      "trigger_signals": ["signal_post_about_ramp_time", "signal_company_hiring_sales_reps"],
+      "hook": "Saw you're scaling the team — most teams like yours cut AE ramp time by 30–40% with the right onboarding framework.",
+      "offer": "Free 30-min live training session on exactly that — no pitch, just the framework."
+    },
+    "pain_quota": {
+      "trigger_signals": ["signal_post_about_quota_miss", "signal_post_about_sales_training"],
+      "hook": "Noticed the conversation about quota attainment — it's the #1 thing we help sales leaders fix.",
+      "offer": "Free 30-min session with a top B2B sales trainer. No pitch, just a working session."
+    },
+    "trigger_funded": {
+      "trigger_signals": ["signal_company_recently_funded"],
+      "hook": "Congrats on the raise — the next 90 days of hiring and ramping AEs are the ones that make or break the growth plan.",
+      "offer": "Free 30-min session on building a repeatable ramp process before the new hires start."
+    },
+    "trigger_new_leader": {
+      "trigger_signals": ["signal_recent_leadership_change"],
+      "hook": "New role, new targets — the first 90 days set the tone for everything that follows.",
+      "offer": "Free 30-min session on standing up a repeatable sales process fast."
+    },
+    "trigger_hiring": {
+      "trigger_signals": ["signal_company_hiring_sales_reps", "signal_rep_turnover_signal"],
+      "hook": "Looks like you're building out the team — the biggest ROI lever at this stage is how fast new reps ramp.",
+      "offer": "Free 30-min training session on cutting ramp time in half."
+    },
+    "generic_credibility": {
+      "trigger_signals": [],
+      "hook": "We help B2B sales teams at companies like yours improve quota attainment and cut rep ramp time.",
+      "offer": "Free 30-min training session — no pitch, just practical tactics your team can use immediately."
+    }
+  }
+}
