@@ -31,7 +31,7 @@
 
   "heyreach": {
     "_comment": "HeyReach public API (https://api.heyreach.io/api/public, auth header X-API-KEY). Campaign/list IDs are NUMERIC — create the campaigns in the HeyReach UI, then paste their numeric ids. sender_linkedin_account_id is the numeric id of the sending LinkedIn account (POST /linkedinaccount/GetAll to find it); it is required when adding leads to a campaign.",
-    "campaign_id_tier_a":        "TODO_HEYREACH_CAMPAIGN_ID_TIER_A",
+    "campaign_id_tier_a":        472974,
     "campaign_id_tier_b":        "TODO_HEYREACH_CAMPAIGN_ID_TIER_B",
     "list_id":                   "TODO_HEYREACH_LIST_ID",
     "sender_linkedin_account_id": "TODO_HEYREACH_SENDER_ACCOUNT_ID",
