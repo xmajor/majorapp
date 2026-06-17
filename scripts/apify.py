@@ -1,5 +1,10 @@
 #!/usr/bin/env python3
-"""Apify API wrapper — LinkedIn post, engager, and profile scraping."""
+"""Apify API wrapper — LinkedIn post, engager, and profile scraping.
+
+Each pipeline source (post / engager / profile) is configured in
+config/pipeline.json under apify.sources as either a saved *task*
+(pre-configured input) or a raw *actor*. The post scraper is a task.
+"""
 
 import os
 import time
@@ -25,14 +30,20 @@ def _token():
     return token
 
 
-def run_actor(actor_id: str, run_input: dict, timeout_secs: int = 300) -> list:
-    """Run an Apify actor synchronously and return dataset items."""
+def _run(run_path: str, run_input: dict | None, timeout_secs: int) -> list:
+    """Start a run at /v2/{run_path}/runs, poll to completion, return dataset items.
+
+    run_path is either "acts/{actor_id}" or "actor-tasks/{task_id}". For the
+    Apify REST API the run input is the raw POST body and run options are query
+    params. Passing an empty body to a task run uses the task's saved input.
+    """
     headers = {"Authorization": f"Bearer {_token()}"}
 
     resp = requests.post(
-        f"{APIFY_BASE}/acts/{actor_id}/runs",
+        f"{APIFY_BASE}/{run_path}/runs",
         headers=headers,
-        json={"input": run_input, "options": {"timeoutSecs": timeout_secs}},
+        params={"timeout": timeout_secs},
+        json=run_input or {},
         timeout=30,
     )
     resp.raise_for_status()
@@ -55,7 +66,7 @@ def run_actor(actor_id: str, run_input: dict, timeout_secs: int = 300) -> list:
         time.sleep(5)
 
     if status != "SUCCEEDED":
-        raise RuntimeError(f"Apify actor run {run_id} finished with status: {status}")
+        raise RuntimeError(f"Apify run {run_id} finished with status: {status}")
 
     items_resp = requests.get(
         f"{APIFY_BASE}/datasets/{dataset_id}/items",
@@ -67,50 +78,58 @@ def run_actor(actor_id: str, run_input: dict, timeout_secs: int = 300) -> list:
     return items_resp.json()
 
 
+def run_actor(actor_id: str, run_input: dict, timeout_secs: int = 300) -> list:
+    """Run a raw actor with explicit input."""
+    return _run(f"acts/{actor_id}", run_input, timeout_secs)
+
+
+def run_task(task_id: str, run_input: dict | None = None, timeout_secs: int = 300) -> list:
+    """Run a saved task. Pass run_input to override the task's saved input,
+    or None/empty to run with the saved input as-is."""
+    return _run(f"actor-tasks/{task_id}", run_input, timeout_secs)
+
+
+def _run_source(source_key: str, run_input: dict, timeout_secs: int) -> list:
+    """Dispatch a configured source (task or actor). Honors override_input:
+    a task with override_input=false runs with its saved input."""
+    src = _config()["apify"]["sources"][source_key]
+    override = run_input if src.get("override_input", True) else None
+    if src["type"] == "task":
+        return run_task(src["id"], override, timeout_secs)
+    return run_actor(src["id"], run_input, timeout_secs)
+
+
 def get_linkedin_posts(profile_urls: list, days_back: int | None = None) -> list:
-    """Scrape recent posts from LinkedIn profile URLs."""
+    """Scrape recent posts. The post scraper is a saved task; by default it runs
+    with its own saved input (profile list configured in the task)."""
     cfg = _config()
-    actor = cfg["apify"]["actors"]["post_scraper"]
     if days_back is None:
         days_back = cfg["apify"]["days_back"]
-    return run_actor(
-        actor,
-        {
-            "profileUrls": profile_urls,
-            "maxPostsPerProfile": cfg["apify"]["max_posts_per_profile"],
-            "daysBack": days_back,
-        },
-        timeout_secs=cfg["apify"]["actor_timeout_secs"],
-    )
+    run_input = {
+        "profileUrls": profile_urls,
+        "maxPostsPerProfile": cfg["apify"]["max_posts_per_profile"],
+        "daysBack": days_back,
+    }
+    return _run_source("post_scraper", run_input, cfg["apify"]["actor_timeout_secs"])
 
 
 def get_post_engagers(post_urls: list) -> list:
     """Scrape likers and commenters from LinkedIn post URLs."""
     cfg = _config()
-    actor = cfg["apify"]["actors"]["engager_scraper"]
-    return run_actor(
-        actor,
-        {
-            "postUrls": post_urls,
-            "maxEngagersPerPost": cfg["apify"]["max_engagers_per_post"],
-        },
-        timeout_secs=cfg["apify"]["actor_timeout_secs"],
-    )
+    run_input = {
+        "postUrls": post_urls,
+        "maxEngagersPerPost": cfg["apify"]["max_engagers_per_post"],
+    }
+    return _run_source("engager_scraper", run_input, cfg["apify"]["actor_timeout_secs"])
 
 
 def get_profile_details(profile_urls: list) -> list:
-    """Fetch enriched profile data for a list of LinkedIn URLs."""
+    """Fetch enriched profile data for a list of LinkedIn URLs (batched)."""
     cfg = _config()
-    actor = cfg["apify"]["actors"]["profile_scraper"]
     batch_size = cfg["apify"]["profile_batch_size"]
+    timeout = cfg["apify"]["actor_timeout_secs"]
     results = []
     for i in range(0, len(profile_urls), batch_size):
         batch = profile_urls[i : i + batch_size]
-        results.extend(
-            run_actor(
-                actor,
-                {"profileUrls": batch},
-                timeout_secs=cfg["apify"]["actor_timeout_secs"],
-            )
-        )
+        results.extend(_run_source("profile_scraper", {"profileUrls": batch}, timeout))
     return results

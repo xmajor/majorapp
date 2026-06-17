@@ -43,7 +43,7 @@ from scripts.state import suppress, append_audit
 from scripts.heyreach import stop_sequence
 
 suppress(msg["profileUrl"])
-stop_sequence(msg["leadId"])
+stop_sequence(msg["profileUrl"])
 append_audit({"event": "opt_out", "profile_url": msg["profileUrl"], "date": today})
 ```
 
@@ -56,7 +56,7 @@ body = (
     f"Great, {msg['firstName']}! Here's the link to grab time: {booking_link}\n\n"
     "Pick whatever works best for you — looking forward to it."
 )
-reply_to_message(msg["messageId"], body)
+reply_to_message(msg["conversationId"], body)
 ```
 
 #### question_product

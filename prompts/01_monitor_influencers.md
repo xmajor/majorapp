@@ -27,8 +27,11 @@ posts = get_linkedin_posts(profile_urls, days_back=days_back)
 print(f"Fetched {len(posts)} posts.")
 ```
 
-If the Apify MCP is connected, prefer calling it directly with the same inputs from
-`config/pipeline.json > apify.actors.post_scraper`.
+The post scraper is configured as a saved Apify **task**
+(`config/pipeline.json > apify.sources.post_scraper`, type `task`). By default it
+runs with its own saved input — the influencer profile list lives in the task — so
+keep `config/influencers.json` in sync with the task's configured profiles. If the
+Apify MCP is connected, you can trigger the same task directly.
 
 ### 4. Tag each post with influencer metadata
 For each post, merge in the matching influencer record (name, niche, why_icp) so
