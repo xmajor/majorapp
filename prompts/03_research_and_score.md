@@ -38,11 +38,11 @@ returns thin results. Focus on these high-value signals:
 
 | Signal to verify | Search query pattern |
 |-----------------|----------------------|
-| Company funding stage | `"{company}" site:techcrunch.com OR crunchbase.com funding` |
-| Company employee count | LinkedIn company page or Crunchbase |
-| Open sales roles | `site:linkedin.com/jobs "{company}" "account executive" OR "SDR"` |
-| Tech stack | `"{company}" uses Salesforce OR HubSpot OR Salesloft` |
-| Recent leadership change | `"{first} {last}" "joins" OR "appointed" "{company}" sales` |
+| High-ticket offer | `"{first} {last}" mastermind OR "high ticket" OR "$" program` |
+| Runs paid traffic to calls | `"{company}" book a call OR strategy call OR application funnel` |
+| Hiring closers/setters | `"{company}" hiring "closer" OR "appointment setter" OR "commission"` |
+| Sales team maturity | profile/about text mentioning setters, closers, sales team |
+| Recent launch | `"{first} {last}" launched OR "new program" OR cohort` |
 
 Only search for leads where profile data is incomplete. Cap research at 2 searches
 per lead to control cost and latency.
@@ -64,11 +64,13 @@ for eng in engagers:
 
     # Your judgment: set signal booleans based on research
     # Examples:
-    #   lead["signal_company_hiring_sales_reps"]  = True  # saw open AE role
-    #   lead["signal_company_recently_funded"]    = True  # found Crunchbase round
-    #   lead["signal_post_about_ramp_time"]       = True  # source post was about ramp
-    #   lead["confidence_company_size"]           = "high"  # from LinkedIn company page
-    #   lead["confidence_tech_stack"]             = "low"   # no data found
+    #   lead["signal_post_about_show_rate"]        = True  # source post was about no-shows
+    #   lead["signal_complained_about_noshows"]    = True  # lead complained about cancellations
+    #   lead["signal_hiring_closers_or_setters"]   = True  # saw a "hiring closers" post
+    #   lead["signal_runs_paid_traffic_to_calls"]  = True  # ad → booking calendar funnel
+    #   lead["signal_high_ticket_offer"]           = True  # $15k mastermind on their site
+    #   lead["confidence_role_fit"]                = "high"  # title clear on profile
+    #   lead["confidence_high_ticket_signal"]      = "low"   # no offer data found
 
     result = score_lead(lead)
     lead["scoring"] = result
@@ -129,15 +131,15 @@ When reading a lead's profile + posts, look for these observable proxies:
 
 | Signal ID | Look for |
 |-----------|----------|
-| `signal_post_about_sales_training` | Source post topic is sales training / coaching |
-| `signal_post_about_quota_miss` | Source post mentions quota, attainment, miss |
-| `signal_post_about_ramp_time` | Source post mentions onboarding, ramp, new reps |
-| `signal_engaged_with_sales_training_content` | Lead commented (not just liked) on training post |
-| `signal_company_recently_funded` | Crunchbase/TechCrunch round in last 90 days |
-| `signal_company_hiring_sales_reps` | Open AE/SDR LinkedIn job posting |
-| `signal_rep_turnover_signal` | Multiple recent AE postings or "building team" language |
-| `signal_recent_leadership_change` | Lead started role < 6 months ago |
-| `signal_competitor_user` | Company uses a competing sales training product |
+| `signal_post_about_show_rate` | Source post is about show rate, no-shows, booked calls not showing |
+| `signal_complained_about_noshows` | Lead complains about no-shows, cancellations, ghosted/cold calls |
+| `signal_hiring_closers_or_setters` | Hiring closers, appointment setters, or commission reps |
+| `signal_runs_paid_traffic_to_calls` | Runs ads to a booking calendar / application funnel |
+| `signal_post_about_closing_or_setters` | Source post about closing, setters, or call conversion |
+| `signal_high_ticket_offer` | Mastermind / $3k+ program / done-for-you retainer sold via calls |
+| `signal_scaling_sales_team` | "Building / scaling a sales team" language |
+| `signal_large_audience` | Large following / high inbound call volume |
+| `signal_recent_launch` | Recently launched a program, offer, or cohort |
 
 Set each as `True` / `False` on the lead dict. Omit (or set `False`) if no evidence.
 

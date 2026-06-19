@@ -1,189 +1,207 @@
 {
-  "_comment": "SalesKick ICP scoring model — applied deterministically by scripts/score.py. Edit here, not in code.",
-  "version": "1.0",
+  "_comment": "SalesKick ICP scoring model for high-ticket coaching / biz-op / agency businesses. Applied deterministically by scripts/score.py. Offer = free show-rate course. Edit here, not in code.",
+  "version": "2.0",
 
   "gates": {
-    "_comment": "Hard filters — ALL must pass or lead is discarded (tier=null, score=0).",
+    "_comment": "Hard filters. Title must match an ICP role and not be excluded. Size/industry only reject when the data is present (unknown values pass, since personal-brand profiles are often sparse).",
     "title_keywords": [
-      "vp of sales", "vp sales", "vice president of sales", "vice president sales",
-      "head of sales", "head of revenue",
-      "director of sales", "sales director", "commercial director",
-      "chief revenue officer", "cro",
-      "vp of revenue", "vp revenue",
-      "revenue operations", "revops", "head of revops",
-      "sales manager", "regional sales manager", "area sales manager",
-      "director of revenue", "revenue director",
-      "chief sales officer"
+      "founder", "co-founder", "cofounder", "owner", "ceo", "chief executive",
+      "managing director", "managing partner", "president",
+      "agency owner", "agency founder",
+      "coach", "coaching", "consultant", "consulting", "mentor", "advisor",
+      "course creator", "creator", "info product", "entrepreneur",
+      "head of sales", "vp of sales", "vp sales", "vice president of sales",
+      "sales director", "director of sales", "sales manager", "head of growth",
+      "head of revenue", "revenue",
+      "closer", "high ticket closer", "high-ticket closer",
+      "appointment setter", "setter", "sales rep", "account executive", "sdr", "bdr"
     ],
     "excluded_title_keywords": [
-      "recruiter", "talent acquisition", "hr ", "human resources",
-      "software engineer", "developer", "designer",
-      "marketing coordinator", "social media",
-      "student", "intern", "freelance"
+      "student", "intern", "open to work", "seeking opportunities",
+      "looking for work", "job seeker", "unemployed",
+      "recruiter", "talent acquisition", "virtual assistant"
     ],
-    "min_employees": 10,
-    "max_employees": 500,
+    "min_employees": 1,
+    "max_employees": 1000,
     "allowed_industries": [
-      "software", "saas", "technology", "information technology",
-      "fintech", "hrtech", "hr tech", "martech",
-      "professional services", "consulting", "management consulting",
-      "b2b", "enterprise software", "cloud computing",
-      "edtech", "legaltech", "proptech", "insurtech"
+      "coaching", "consulting", "professional training", "e-learning",
+      "education", "online education", "marketing", "advertising",
+      "marketing services", "marketing & advertising", "internet",
+      "information services", "online media", "professional services",
+      "health, wellness & fitness", "fitness", "financial services",
+      "media production", "broadcast media"
     ],
     "excluded_industries": [
-      "staffing", "recruiting agency", "multilevel marketing", "mlm",
-      "cryptocurrency", "gambling", "adult entertainment",
-      "retail", "food & beverage", "hospitality"
+      "staffing", "staffing & recruiting", "recruiting", "multilevel marketing",
+      "multi-level marketing", "mlm", "gambling & casinos", "gambling",
+      "adult entertainment", "tobacco", "defense"
     ]
   },
 
   "fit_dimensions": {
-    "_comment": "Each dimension contributes up to its max_points. Max raw fit score = 15.",
+    "_comment": "Each dimension declares which lead field(s) to read via match_field (string or list) or range_field. Max raw fit score = 15.",
 
-    "title_seniority": {
+    "role_fit": {
       "max_points": 4,
-      "signal_id": "fit_title_seniority",
+      "match_field": ["headline", "title"],
       "rules": [
         {
-          "label": "c_suite_vp",
-          "match_any": ["cro", "chief revenue", "chief sales", "vp sales", "vp of sales", "vp revenue", "head of sales", "head of revenue"],
+          "label": "founder_owner_ceo",
+          "match_any": ["founder", "co-founder", "cofounder", "owner", "ceo", "chief executive", "managing director", "managing partner", "president"],
           "points": 4
         },
         {
-          "label": "director",
-          "match_any": ["director of sales", "sales director", "commercial director", "director of revenue"],
+          "label": "sales_leader",
+          "match_any": ["head of sales", "vp of sales", "vp sales", "vice president of sales", "sales director", "director of sales", "sales manager", "head of growth", "head of revenue"],
+          "points": 4
+        },
+        {
+          "label": "coach_consultant",
+          "match_any": ["coach", "consultant", "mentor", "advisor", "consulting"],
           "points": 3
         },
         {
-          "label": "manager",
-          "match_any": ["sales manager", "regional sales manager", "area sales manager", "revops", "revenue operations"],
+          "label": "closer_setter",
+          "match_any": ["closer", "appointment setter", "setter", "account executive", "sales rep", "sdr", "bdr"],
+          "points": 3
+        },
+        {
+          "label": "creator_entrepreneur",
+          "match_any": ["entrepreneur", "creator", "course creator", "content creator"],
           "points": 2
         }
       ]
     },
 
-    "company_size": {
+    "business_type_fit": {
       "max_points": 3,
-      "signal_id": "fit_company_size",
-      "rules": [
-        { "label": "sweet_spot",   "range": [51, 200],  "points": 3 },
-        { "label": "upper_mid",    "range": [201, 500], "points": 2 },
-        { "label": "early_stage",  "range": [10, 50],   "points": 1 }
-      ]
-    },
-
-    "tech_stack": {
-      "max_points": 3,
-      "signal_id": "fit_tech_stack",
-      "_note": "Inferred from LinkedIn company page, job postings, or BuiltWith.",
+      "match_field": ["industry", "headline", "company", "about"],
       "rules": [
         {
-          "label": "sales_stack_full",
-          "match_any": ["salesforce", "hubspot crm", "salesloft", "outreach.io", "gong", "chorus"],
+          "label": "coaching_consulting",
+          "match_any": ["coaching", "consultant", "consulting", "mentorship", "mastermind"],
           "points": 3
         },
         {
-          "label": "crm_only",
-          "match_any": ["crm", "sales engagement", "revenue intelligence", "pipedrive", "zoho crm"],
+          "label": "agency",
+          "match_any": ["agency", "marketing services", "done-for-you", "done for you", "dfy"],
+          "points": 3
+        },
+        {
+          "label": "info_product_course",
+          "match_any": ["course", "info product", "info-product", "digital product", "online program", "cohort"],
           "points": 2
         },
         {
-          "label": "manual_or_spreadsheet",
-          "match_any": ["excel", "spreadsheet", "google sheets", "manual tracking"],
+          "label": "creator_media",
+          "match_any": ["creator", "content", "media", "personal brand"],
           "points": 1
         }
       ]
     },
 
-    "funding_stage": {
+    "high_ticket_signal": {
       "max_points": 3,
-      "signal_id": "fit_funding_stage",
+      "match_field": ["about", "headline", "source_post_text"],
       "rules": [
         {
-          "label": "growth_round",
-          "match_any": ["series a", "series b", "series c"],
+          "label": "explicit_high_ticket",
+          "match_any": ["high ticket", "high-ticket", "mastermind", "$10k", "$5k", "$25k", "premium program", "done-for-you", "done for you"],
           "points": 3
         },
         {
-          "label": "early_round",
-          "match_any": ["seed", "pre-seed", "angel round"],
+          "label": "paid_program",
+          "match_any": ["program", "coaching offer", "retainer", "package", "enrollment"],
           "points": 2
         },
         {
-          "label": "bootstrapped_or_profitable",
-          "match_any": ["bootstrapped", "self-funded", "profitable", "private"],
+          "label": "audience_monetization",
+          "match_any": ["community", "membership", "cohort", "academy"],
           "points": 1
         }
       ]
     },
 
-    "icp_engagement_quality": {
+    "sales_team_maturity": {
+      "max_points": 3,
+      "match_field": ["about", "headline", "source_post_text"],
+      "rules": [
+        {
+          "label": "has_sales_team",
+          "match_any": ["sales team", "closers", "setters", "appointment setters", "sales floor", "commission-only"],
+          "points": 3
+        },
+        {
+          "label": "building_team",
+          "match_any": ["hiring", "scaling the team", "growing the team", "commission", "recruiting closers"],
+          "points": 2
+        },
+        {
+          "label": "founder_led_sales",
+          "match_any": ["sales calls", "discovery calls", "booked calls", "strategy calls", "sales call"],
+          "points": 1
+        }
+      ]
+    },
+
+    "engagement_quality": {
       "max_points": 2,
-      "signal_id": "fit_engagement_quality",
-      "_note": "How they engaged with the influencer post.",
+      "match_field": "engagement_type",
       "rules": [
-        {
-          "label": "commented",
-          "match_any": ["commented"],
-          "points": 2
-        },
-        {
-          "label": "liked_only",
-          "match_any": ["liked", "reacted"],
-          "points": 1
-        }
+        { "label": "commented", "match_any": ["commented"], "points": 2 },
+        { "label": "liked_only", "match_any": ["liked", "reacted"], "points": 1 }
       ]
     }
   },
 
   "triggers": {
-    "_comment": "High-intent bonus signals. Max bonus = sum of all item bonuses (do not exceed max_total_bonus).",
+    "_comment": "High-intent bonus signals tied to the show-rate offer. Agent sets each signal_* boolean from observable research. Max bonus = 15.",
     "max_total_bonus": 15,
     "items": [
       {
-        "id": "signal_post_about_sales_training",
+        "id": "signal_post_about_show_rate",
         "bonus": 5,
-        "description": "The influencer post they engaged with is explicitly about sales coaching, training, or methodology."
+        "description": "The post they engaged with (or their own posts) is about show rate, no-shows, or booked calls not showing up."
       },
       {
-        "id": "signal_post_about_quota_miss",
+        "id": "signal_complained_about_noshows",
         "bonus": 5,
-        "description": "Lead or the post they engaged with mentions quota attainment struggles, missed targets, or revenue gaps."
+        "description": "Lead explicitly complains about no-shows, cancellations, ghosted calls, or low show rate."
       },
       {
-        "id": "signal_post_about_ramp_time",
+        "id": "signal_hiring_closers_or_setters",
+        "bonus": 5,
+        "description": "Lead or their company is actively hiring closers, appointment setters, or commission sales reps."
+      },
+      {
+        "id": "signal_runs_paid_traffic_to_calls",
         "bonus": 4,
-        "description": "Lead or post mentions AE ramp time, onboarding new reps, or rep productivity."
+        "description": "Evidence they run paid ads to a booking calendar / call funnel (booked calls from paid traffic)."
       },
       {
-        "id": "signal_engaged_with_sales_training_content",
+        "id": "signal_post_about_closing_or_setters",
         "bonus": 3,
-        "description": "Lead left a comment (not just a like) on a sales training post — higher intent."
+        "description": "Post they engaged with is about closing, setters, call conversion, or sales-call mechanics."
       },
       {
-        "id": "signal_company_recently_funded",
-        "bonus": 4,
-        "description": "Company raised a funding round within the last 90 days (Crunchbase / TechCrunch)."
-      },
-      {
-        "id": "signal_company_hiring_sales_reps",
-        "bonus": 5,
-        "description": "Company has active AE, SDR, or BDR job postings on LinkedIn Jobs."
-      },
-      {
-        "id": "signal_rep_turnover_signal",
+        "id": "signal_high_ticket_offer",
         "bonus": 3,
-        "description": "Multiple recent AE job postings, or lead's posts/comments indicate rep churn or team rebuilding."
+        "description": "Clear high-ticket offer (mastermind, $3k+ program, done-for-you retainer) sold via sales calls."
       },
       {
-        "id": "signal_recent_leadership_change",
+        "id": "signal_scaling_sales_team",
         "bonus": 3,
-        "description": "Lead started current sales leadership role less than 6 months ago."
+        "description": "Lead mentions building or scaling a sales team of closers/setters."
       },
       {
-        "id": "signal_competitor_user",
+        "id": "signal_large_audience",
         "bonus": 2,
-        "description": "Company uses a direct competitor's sales training or enablement product."
+        "description": "Large following / high inbound volume implying many booked calls where show rate compounds."
+      },
+      {
+        "id": "signal_recent_launch",
+        "bonus": 2,
+        "description": "Recently launched a new program, offer, or cohort (fresh push of booked calls)."
       }
     ]
   },
@@ -201,8 +219,8 @@
     },
 
     "confidence_levels": {
-      "high":   "Signal verified from structured public data (LinkedIn, Crunchbase, company site).",
-      "medium": "Signal inferred from post text, job title, or unstructured mentions.",
+      "high":   "Signal verified from structured public data (LinkedIn profile, company page, course/sales page).",
+      "medium": "Signal inferred from post text, headline, or unstructured mentions.",
       "low":    "Limited data — signal assumed absent or unknown."
     },
 
@@ -211,7 +229,7 @@
 
   "tiers": {
     "A": {
-      "description": "High-fit + high-intent. Immediate personalized outreach.",
+      "description": "High-fit + high-intent. Immediate personalized show-rate outreach.",
       "heyreach_campaign_key": "campaign_id_tier_a",
       "daily_cap_key":         "daily_cap_tier_a",
       "personalization":       "required — must reference influencer + matched angle hook"
@@ -225,35 +243,35 @@
   },
 
   "angles": {
-    "pain_ramp_time": {
-      "trigger_signals": ["signal_post_about_ramp_time", "signal_company_hiring_sales_reps"],
-      "hook": "Saw you're scaling the team — most teams like yours cut AE ramp time by 30–40% with the right onboarding framework.",
-      "offer": "Free 30-min live training session on exactly that — no pitch, just the framework."
+    "show_rate_fix": {
+      "trigger_signals": ["signal_post_about_show_rate", "signal_complained_about_noshows"],
+      "hook": "Saw the conversation about no-shows — for high-ticket teams, show rate is usually the single biggest leak between booked calls and revenue.",
+      "offer": "We put together a free show-rate course that walks through the exact system to get more booked calls to actually show. No pitch: https://www.saleskick.com/show-rate-course"
     },
-    "pain_quota": {
-      "trigger_signals": ["signal_post_about_quota_miss", "signal_post_about_sales_training"],
-      "hook": "Noticed the conversation about quota attainment — it's the #1 thing we help sales leaders fix.",
-      "offer": "Free 30-min session with a top B2B sales trainer. No pitch, just a working session."
+    "speed_to_lead": {
+      "trigger_signals": ["signal_runs_paid_traffic_to_calls"],
+      "hook": "If you're running paid traffic to a calendar, speed-to-lead and the confirmation flow make or break show rate — most teams lose 20–40% of booked calls before they ever happen.",
+      "offer": "Free show-rate course covering exactly that: https://www.saleskick.com/show-rate-course"
     },
-    "trigger_funded": {
-      "trigger_signals": ["signal_company_recently_funded"],
-      "hook": "Congrats on the raise — the next 90 days of hiring and ramping AEs are the ones that make or break the growth plan.",
-      "offer": "Free 30-min session on building a repeatable ramp process before the new hires start."
+    "setter_closer_handoff": {
+      "trigger_signals": ["signal_post_about_closing_or_setters", "signal_high_ticket_offer"],
+      "hook": "The setter-to-closer handoff is where most high-ticket teams quietly lose deals — booked calls that never show, or show cold.",
+      "offer": "Free show-rate course that fixes the handoff and the no-show leak: https://www.saleskick.com/show-rate-course"
     },
-    "trigger_new_leader": {
-      "trigger_signals": ["signal_recent_leadership_change"],
-      "hook": "New role, new targets — the first 90 days set the tone for everything that follows.",
-      "offer": "Free 30-min session on standing up a repeatable sales process fast."
+    "scaling_sales_team": {
+      "trigger_signals": ["signal_hiring_closers_or_setters", "signal_scaling_sales_team"],
+      "hook": "Scaling closers/setters only works if show rate holds — otherwise you're adding headcount to a leaky calendar.",
+      "offer": "Free show-rate course before you scale the team: https://www.saleskick.com/show-rate-course"
     },
-    "trigger_hiring": {
-      "trigger_signals": ["signal_company_hiring_sales_reps", "signal_rep_turnover_signal"],
-      "hook": "Looks like you're building out the team — the biggest ROI lever at this stage is how fast new reps ramp.",
-      "offer": "Free 30-min training session on cutting ramp time in half."
+    "high_ticket_credibility": {
+      "trigger_signals": ["signal_high_ticket_offer", "signal_large_audience"],
+      "hook": "For high-ticket offers, a few points of show rate is the difference between a good month and a great one.",
+      "offer": "Free show-rate course: https://www.saleskick.com/show-rate-course"
     },
     "generic_credibility": {
       "trigger_signals": [],
-      "hook": "We help B2B sales teams at companies like yours improve quota attainment and cut rep ramp time.",
-      "offer": "Free 30-min training session — no pitch, just practical tactics your team can use immediately."
+      "hook": "We help high-ticket coaching and agency teams get more of their booked sales calls to actually show up and close.",
+      "offer": "Free show-rate course — no pitch, just the system: https://www.saleskick.com/show-rate-course"
     }
   }
 }

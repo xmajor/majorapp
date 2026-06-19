@@ -26,13 +26,25 @@ def _matches_any(haystack: str, needles: list) -> bool:
     return any(_normalize(n) in h for n in needles)
 
 
+def _field_text(lead: dict, fields) -> str:
+    """Concatenate the text of one or more lead fields for matching."""
+    if isinstance(fields, str):
+        fields = [fields]
+    return " ".join(str(lead.get(f, "") or "") for f in fields)
+
+
+def _size(lead: dict) -> int:
+    return int(lead.get("employeeCount", 0) or lead.get("company_employee_count", 0) or 0)
+
+
 # ── Gates ─────────────────────────────────────────────────────────────────────
 
 def _check_gates(lead: dict, gates: dict) -> tuple[bool, str]:
-    """Return (passed, reason). If not passed, reason explains which gate failed."""
+    """Return (passed, reason). Title is the primary gate. Size/industry only
+    reject when the data is actually present — sparse personal-brand profiles pass."""
     title    = lead.get("headline", "") or lead.get("title", "") or ""
     industry = lead.get("industry", "") or ""
-    size     = lead.get("employeeCount", 0) or lead.get("company_employee_count", 0) or 0
+    size     = _size(lead)
 
     if not _matches_any(title, gates["title_keywords"]):
         return False, "title_gate_fail"
@@ -40,13 +52,10 @@ def _check_gates(lead: dict, gates: dict) -> tuple[bool, str]:
     if _matches_any(title, gates["excluded_title_keywords"]):
         return False, "title_excluded"
 
-    if not (gates["min_employees"] <= int(size) <= gates["max_employees"]):
+    if size > 0 and not (gates["min_employees"] <= size <= gates["max_employees"]):
         return False, f"size_gate_fail (got {size})"
 
-    if not _matches_any(industry, gates["allowed_industries"]):
-        return False, "industry_gate_fail"
-
-    if _matches_any(industry, gates["excluded_industries"]):
+    if industry and _matches_any(industry, gates["excluded_industries"]):
         return False, "industry_excluded"
 
     return True, "passed"
@@ -55,36 +64,22 @@ def _check_gates(lead: dict, gates: dict) -> tuple[bool, str]:
 # ── Fit dimensions ────────────────────────────────────────────────────────────
 
 def _score_dimension(lead: dict, dim_name: str, dim_cfg: dict) -> tuple[int, str, str]:
-    """Return (points, matched_label, confidence)."""
-    title    = lead.get("headline", "") or lead.get("title", "") or ""
-    industry = lead.get("industry", "") or ""
-    size     = int(lead.get("employeeCount", 0) or lead.get("company_employee_count", 0) or 0)
-    tech     = lead.get("tech_stack", "") or ""
-    funding  = lead.get("funding_stage", "") or ""
-    eng_type = lead.get("engagement_type", "") or ""
-
-    confidence_key = f"confidence_{dim_name}"
-    confidence = lead.get(confidence_key, "medium")
+    """Return (points, matched_label, confidence). Generic: each dimension declares
+    which lead field(s) to read via match_field (string match) or range_field (numeric)."""
+    confidence = lead.get(f"confidence_{dim_name}", "medium")
 
     for rule in dim_cfg["rules"]:
         matched = False
 
         if "match_any" in rule:
-            if dim_name == "title_seniority":
-                matched = _matches_any(title, rule["match_any"])
-            elif dim_name == "tech_stack":
-                matched = _matches_any(tech, rule["match_any"]) or _matches_any(title, rule["match_any"])
-            elif dim_name == "funding_stage":
-                matched = _matches_any(funding, rule["match_any"])
-            elif dim_name == "icp_engagement_quality":
-                matched = _matches_any(eng_type, rule["match_any"])
-            else:
-                search_space = f"{title} {industry} {tech} {funding}"
-                matched = _matches_any(search_space, rule["match_any"])
+            text = _field_text(lead, dim_cfg.get("match_field", []))
+            matched = _matches_any(text, rule["match_any"])
 
         elif "range" in rule:
+            field = dim_cfg.get("range_field", "employeeCount")
+            val   = int(lead.get(field, 0) or 0)
             lo, hi = rule["range"]
-            matched = lo <= size <= hi
+            matched = lo <= val <= hi
 
         if matched:
             return rule["points"], rule["label"], confidence
@@ -235,16 +230,16 @@ if __name__ == "__main__":
     import sys
 
     sample = {
-        "headline": "VP of Sales",
-        "industry": "SaaS",
-        "employeeCount": 120,
-        "tech_stack": "Salesforce Gong",
-        "funding_stage": "series b",
+        "headline": "Founder & CEO at a high-ticket coaching agency",
+        "industry": "Professional Training & Coaching",
+        "about": "We run a $15k mastermind. Our setters book strategy calls from paid traffic for our closers.",
+        "source_post_text": "Our show rate on booked calls has been killing us this quarter.",
         "engagement_type": "commented",
-        "signal_company_recently_funded": True,
-        "signal_company_hiring_sales_reps": True,
-        "confidence_title_seniority": "high",
-        "confidence_company_size": "high",
+        "signal_post_about_show_rate": True,
+        "signal_complained_about_noshows": True,
+        "signal_runs_paid_traffic_to_calls": True,
+        "confidence_role_fit": "high",
+        "confidence_business_type_fit": "high",
     }
     result = score_lead(sample)
     print(json.dumps(result, indent=2))

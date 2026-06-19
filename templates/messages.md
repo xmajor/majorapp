@@ -1,101 +1,102 @@
-# Message Templates — SalesKick Outbound
+# Message Templates — SalesKick Outbound (Show-Rate Course)
 
-All templates use `{{PLACEHOLDER}}` syntax. Fill before sending.
-Never send a message with unfilled placeholders.
+All templates use `{{PLACEHOLDER}}` syntax. Fill before sending. Never send a
+message with unfilled placeholders.
+
+Placeholders (filled in stage 4, `prompts/04_push_to_heyreach.md`):
+- `{{FIRST_NAME}}` — lead first name
+- `{{COMPANY}}` — lead company / brand
+- `{{INFLUENCER_NAME}}` — the influencer whose post they engaged with
+- `{{HOOK}}` — angle hook line from `config/lead_scoring.json > angles`
+- `{{OFFER}}` — angle offer line (already contains the show-rate course link)
+- `{{BOOKING_LINK}}` — https://www.saleskick.com/show-rate-course
+
+The offer is the **free show-rate course**, not a call. Keep it value-first; the
+course IS the call-to-action.
 
 ---
 
 ## Outbound DMs — Initial Contact
 
-### Tier A — angle: pain_ramp_time
-> Triggered by: hiring signal OR ramp-time post engagement
+### Tier A — angle: show_rate_fix
+> Triggered by: show-rate / no-show post engagement or complaint
 
 ---
-Hey {{FIRST_NAME}} — saw you engaging with {{INFLUENCER_NAME}}'s post on {{INFLUENCER_NICHE}}.
+Hey {{FIRST_NAME}} — saw you in the comments on {{INFLUENCER_NAME}}'s post.
 
 {{HOOK}}
 
-We're putting together a small live training session with a top B2B sales trainer on exactly this — ramp frameworks, onboarding playbooks, the works. Free, 30 minutes, zero pitch.
+{{OFFER}}
 
-Thought you'd find it useful given what you're building at {{COMPANY}}.
-
-Worth 30 mins? {{BOOKING_LINK}}
+Figured it might be relevant to what you're running at {{COMPANY}}.
 
 ---
 
-### Tier A — angle: pain_quota
-> Triggered by: quota/attainment post engagement
+### Tier A — angle: speed_to_lead
+> Triggered by: running paid traffic to a booking calendar
 
 ---
-Hey {{FIRST_NAME}} — came across your engagement on {{INFLUENCER_NAME}}'s content and it resonated.
+Hey {{FIRST_NAME}} — noticed your engagement on {{INFLUENCER_NAME}}'s content.
 
 {{HOOK}}
 
-We're running a free 30-min working session with one of the top B2B sales trainers in the space — focused entirely on quota attainment levers. No pitch, just actionable frameworks.
+{{OFFER}}
 
-Given your role at {{COMPANY}}, thought it might be worth 30 minutes.
-
-Grab a spot here: {{BOOKING_LINK}}
+No pitch — just the framework you can hand to your setters today.
 
 ---
 
-### Tier A — angle: trigger_funded
-> Triggered by: recent funding announcement
+### Tier A — angle: setter_closer_handoff
+> Triggered by: closer/setter post + a high-ticket offer
 
 ---
-Hey {{FIRST_NAME}} — congrats on the raise!
+Hey {{FIRST_NAME}} — caught your comment on {{INFLUENCER_NAME}}'s post.
 
 {{HOOK}}
 
-We're running a free 30-min session with a senior B2B sales trainer specifically on this — building the onboarding process before the new hires show up. No pitch, just a working session.
+{{OFFER}}
 
-Would it be useful to you and the team at {{COMPANY}}?
-
-{{BOOKING_LINK}}
+Thought it'd be useful given the team you're running at {{COMPANY}}.
 
 ---
 
-### Tier A — angle: trigger_new_leader
-> Triggered by: recent leadership change (< 6 months in role)
+### Tier A — angle: scaling_sales_team
+> Triggered by: hiring closers/setters or scaling the team
 
 ---
-Hey {{FIRST_NAME}} — noticed you're relatively new to the {{COMPANY}} role. The first 90 days set the trajectory.
+Hey {{FIRST_NAME}} — saw {{COMPANY}} is building out the sales team.
 
 {{HOOK}}
 
-We're running a free 30-min live session with a sales trainer who's helped dozens of new sales leaders stand up a repeatable process in their first quarter. Zero pitch — just the playbook.
+{{OFFER}}
 
-Worth 30 mins? {{BOOKING_LINK}}
-
----
-
-### Tier A — angle: trigger_hiring
-> Triggered by: open AE/SDR job postings
-
----
-Hey {{FIRST_NAME}} — saw {{COMPANY}} is building out the sales team (nice to see the growth).
-
-{{HOOK}}
-
-Running a free 30-min training session on exactly this — cutting new rep ramp time. Most teams we work with see a material difference in time-to-first-deal after implementing the framework. No pitch.
-
-Worth a look? {{BOOKING_LINK}}
+Worth a look before the next closer/setter starts.
 
 ---
 
-### Tier B — angle: generic_credibility
-> Used when no strong trigger signal fires
+### Tier A — angle: high_ticket_credibility
+> Triggered by: high-ticket offer + large audience, no sharper signal
 
 ---
 Hey {{FIRST_NAME}} — saw you engaging with {{INFLUENCER_NAME}}'s content.
 
 {{HOOK}}
 
-We put on a free 30-min live training session with a top sales trainer — focused on practical quota attainment tactics your team can use right away. No product pitch, just value.
+{{OFFER}}
+
+---
+
+### Tier B — angle: generic_credibility
+> Used when no strong trigger fired
+
+---
+Hey {{FIRST_NAME}} — saw you following {{INFLUENCER_NAME}}'s stuff.
+
+{{HOOK}}
+
+{{OFFER}}
 
 Would it be relevant for {{COMPANY}}?
-
-{{BOOKING_LINK}}
 
 ---
 
@@ -103,21 +104,20 @@ Would it be relevant for {{COMPANY}}?
 
 ### Follow-up 1 (Day 3)
 ---
-Following up on this, {{FIRST_NAME}} — wanted to make sure it didn't get buried.
+Following up, {{FIRST_NAME}} — wanted to make sure this didn't get buried.
 
-The session is free and 30 minutes. We're keeping it to a small group so the trainer can go deep on your specific situation.
+The show-rate course is free and self-paced. Most teams find the no-show recovery
+sequence alone moves the number within a couple weeks.
 
-Still worth a look: {{BOOKING_LINK}}
+{{BOOKING_LINK}}
 
 ---
 
 ### Follow-up 2 (Day 7)
 ---
-Last one from me, {{FIRST_NAME}} — if the timing isn't right, totally understand.
+Last one from me, {{FIRST_NAME}} — if show rate isn't a priority right now, no worries.
 
-If quota attainment or ramp time becomes a priority at {{COMPANY}}, the offer stands.
-
-You can grab a spot anytime: {{BOOKING_LINK}}
+If it becomes one at {{COMPANY}}, the course is here anytime: {{BOOKING_LINK}}
 
 ---
 
@@ -125,66 +125,65 @@ You can grab a spot anytime: {{BOOKING_LINK}}
 
 ## Inbox Reply Playbook
 
-### book_meeting — they said yes / want to book
+### book_meeting — they're interested / want the course / want to talk
 
 ---
-Great, {{FIRST_NAME}}! Here's the link to grab a time: {{BOOKING_LINK}}
+Awesome, {{FIRST_NAME}}! Here's the free show-rate course: {{BOOKING_LINK}}
 
-Pick whatever works best — looking forward to it.
-
----
-
-### question_product — asking what we do / what SalesKick is
-
----
-Sure! SalesKick is a sales-ops platform that helps B2B sales leaders improve quota attainment and cut new rep ramp time. We do it through structured coaching frameworks, not just theory.
-
-The free session is a live working call with one of our trainers — it's genuinely just a session, not a sales call. You'll walk away with something usable.
-
-Easiest way to see if it's relevant: {{BOOKING_LINK}} — 30 minutes, cancel anytime.
+Start with the no-show recovery module — that's the fastest win. If you want to
+talk through applying it to {{COMPANY}}, just say the word and I'll set it up.
 
 ---
 
-### objection_time — too busy right now / bad timing
+### question_product — what is this / what's SalesKick / how does it work
 
 ---
-Totally get it, {{FIRST_NAME}} — timing is everything.
+Sure! SalesKick is a sales-ops platform for high-ticket coaching and agency teams —
+we help you get more of your booked calls to actually show up and close.
 
-When would be a better time to circle back? Happy to reach out in a few weeks or next quarter, whichever works better.
-
-No pressure either way.
-
----
-
-### objection_not_relevant — not a fit / no sales team
-
----
-Appreciated the honest reply, {{FIRST_NAME}} — makes sense if it's not the right fit right now.
-
-Best of luck with the team at {{COMPANY}}.
+The show-rate course is genuinely free and not a sales call: it's the exact
+confirmation, reminder, and no-show recovery system our clients use. You can go
+through it at your own pace here: {{BOOKING_LINK}}
 
 ---
 
-### referral — they pointed you to someone else
+### objection_time — too busy / bad timing
 
 ---
-Thanks {{FIRST_NAME}} — really appreciate the intro. I'll reach out to {{REFERRAL_NAME}} directly.
+Totally get it, {{FIRST_NAME}}. The course is self-paced, so it'll keep — bookmark
+it for when show rate moves up the list: {{BOOKING_LINK}}
 
-And if the timing ever shifts for you, feel free to grab a session too: {{BOOKING_LINK}}
+Want me to check back in a few weeks?
 
 ---
 
-### escalate — pricing / legal / contract / complaint
-**Do not reply.** Log to `state/escalations.jsonl` with full message text and flag for human.
-Never discuss pricing, contracts, legal terms, or complaints in automated replies.
+### objection_not_relevant — not a fit / no sales calls / no team
+
+---
+Appreciate the honest reply, {{FIRST_NAME}} — makes sense if booked calls aren't part
+of how {{COMPANY}} sells right now. Best of luck with it.
+
+---
+
+### referral — they point you to someone else (e.g. their sales lead)
+
+---
+Thanks {{FIRST_NAME}} — appreciate it. I'll send {{REFERRAL_NAME}} the show-rate course
+directly. And it's here for you too anytime: {{BOOKING_LINK}}
+
+---
+
+### escalate — pricing / contract / legal / complaint
+**Do not reply.** Log to `state/escalations.jsonl` with the full message and flag for
+a human. Never discuss pricing, contracts, or legal terms in an automated reply.
 
 ---
 
 ## Personalization rules
-1. Always use first name only (never "Hi [Full Name]").
+1. First name only (never "Hi [Full Name]").
 2. Reference the specific influencer by name, not "someone you follow".
-3. Keep messages under 120 words. Long messages get ignored.
+3. Under 120 words. Long DMs get ignored.
 4. No emoji unless the lead used them first.
-5. No exclamation points except after "Great" in booking confirmation.
-6. Do not use "I wanted to reach out" or "I hope this finds you well".
-7. One call to action per message. Always the booking link.
+5. One call to action per message — always the show-rate course link.
+6. Don't open with "I wanted to reach out" or "I hope this finds you well".
+7. Lead with their pain (show rate / no-shows), not with SalesKick.
