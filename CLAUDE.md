@@ -76,3 +76,20 @@ This keeps scoring auditable and consistent. Never invent invisible metrics
 - `templates/messages.md` — DM copy + inbox playbook.
 - `scripts/apify.py`, `heyreach.py`, `score.py`, `state.py` — Python tooling.
 - `state/` — runtime state (gitignored except suppression template).
+
+## Network access (Claude Code on the web)
+
+The pipeline makes outbound calls to **`api.apify.com`** (scraping) and
+**`api.heyreach.io`** (outreach). The default **Trusted** network level blocks both.
+To run live: edit the environment → **Network access** → **Custom** → add to
+**Allowed domains** (one per line):
+
+```
+*.apify.com
+*.heyreach.io
+```
+
+Keep **"Also include default list of common package managers"** checked (pip/gem/npm).
+The change applies to **new sessions**, so start a fresh session after saving.
+LinkedIn scraping happens on Apify's side (no LinkedIn host needed); stage-3
+`web_search`/`web_fetch` route through Anthropic, not container egress.
