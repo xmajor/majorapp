@@ -30,12 +30,19 @@ module LinkedinOutbound
       true
     end
 
-    # Adds leads to an existing HeyReach list. `leads` is an Array of lead
-    # Hashes (see EngagementOutbound#to_heyreach_lead for the shape).
+    # HeyReach accepts at most 100 leads per AddLeadsToList request.
+    MAX_LEADS_PER_REQUEST = 100
+
+    # Adds leads to an existing HeyReach list, batching to stay within the
+    # per-request limit. `leads` is an Array of lead Hashes (see
+    # EngagementOutbound#to_heyreach_lead for the shape).
     def add_leads_to_list(list_id:, leads:)
-      payload = { listId: list_id, leads: leads }
       log "Adding #{leads.size} lead(s) to HeyReach list #{list_id}..."
-      post("/list/AddLeadsToListV2", payload)
+      leads.each_slice(MAX_LEADS_PER_REQUEST).with_index do |batch, i|
+        log "  batch #{i + 1}: #{batch.size} lead(s)"
+        post("/list/AddLeadsToListV2", { listId: list_id, leads: batch })
+      end
+      { added: leads.size }
     end
 
     private
