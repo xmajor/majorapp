@@ -12,12 +12,12 @@
       },
       "engager_scraper": {
         "type": "actor",
-        "id": "curious_coder/linkedin-post-reactions",
+        "id": "pto61RIlNlf8ctyod",
         "override_input": true
       },
       "profile_scraper": {
         "type": "actor",
-        "id": "apify/linkedin-profile-scraper",
+        "id": "pto61RIlNlf8ctyod",
         "override_input": true
       }
     },
