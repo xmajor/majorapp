@@ -8,19 +8,20 @@
 # Required ENV:
 #   APIFY_TOKEN        - Apify API token
 #   HEYREACH_API_KEY   - HeyReach API key
-#   APIFY_ACTOR        - Apify actor id, e.g. "apify~linkedin-post-reactions-scraper"
-#   POST_URL           - LinkedIn post URL to pull engagement from
 #   HEYREACH_LIST_ID   - HeyReach list id to add leads to (omit when DRY_RUN=1)
+#
+# Scrape source (pick one):
+#   APIFY_TASK         - Apify task id/name, e.g. "vibeyx~saleskick-post-scraper"
+#   APIFY_ACTOR + POST_URL - run a raw actor against a single post URL
 #
 # Optional ENV:
 #   DRY_RUN=1          - scrape + map but do not push to HeyReach
-#   ACTOR_INPUT_JSON   - extra JSON merged into the Apify actor input
+#   ACTOR_INPUT_JSON   - JSON merged over the task/actor input
 #
-# Example:
+# Example (task):
 #   APIFY_TOKEN=... HEYREACH_API_KEY=... \
-#   APIFY_ACTOR=apify~linkedin-post-reactions-scraper \
-#   POST_URL="https://www.linkedin.com/posts/..." \
-#   HEYREACH_LIST_ID=12345 \
+#   APIFY_TASK=vibeyx~saleskick-post-scraper \
+#   HEYREACH_LIST_ID=734479 \
 #   bundle exec rake linkedin_outbound:run
 
 namespace :linkedin_outbound do
@@ -37,9 +38,10 @@ namespace :linkedin_outbound do
       end
 
     config = {
+      apify_task: ENV["APIFY_TASK"],
       apify_actor: ENV["APIFY_ACTOR"],
       post_url: ENV["POST_URL"],
-      actor_input: actor_input,
+      actor_input: actor_input.empty? ? nil : actor_input,
       heyreach_list_id: ENV["HEYREACH_LIST_ID"],
       dry_run: ENV["DRY_RUN"] == "1",
     }

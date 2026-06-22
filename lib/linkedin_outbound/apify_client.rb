@@ -43,6 +43,23 @@ module LinkedinOutbound
       items
     end
 
+    # Runs a saved Apify task synchronously and returns its dataset items.
+    # `task` is the task id or "user~task-name" form. `input` (optional) is
+    # merged over the task's saved input on the Apify side.
+    def run_task_and_fetch_items(task:, input: nil, timeout_secs: 600)
+      path = "/actor-tasks/#{task}/run-sync-get-dataset-items"
+      uri = URI("#{@base_url}#{path}")
+      uri.query = URI.encode_www_form(token: @token, timeout: timeout_secs)
+
+      log "Running Apify task #{task}..."
+      body = post_json(uri, input || {}, read_timeout: timeout_secs + 30)
+      items = JSON.parse(body)
+      raise Error, "Unexpected Apify response: #{items.inspect}" unless items.is_a?(Array)
+
+      log "Apify returned #{items.size} dataset record(s)."
+      items
+    end
+
     private
 
     def post_json(uri, payload, read_timeout:)

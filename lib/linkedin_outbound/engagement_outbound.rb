@@ -8,8 +8,10 @@ require_relative "heyreach_client"
 module LinkedinOutbound
   # Orchestrates a LinkedIn engagement -> outbound run:
   #
-  #   1. Scrape engagers of a LinkedIn post via an Apify actor.
-  #   2. Normalize them into HeyReach lead records.
+  #   1. Scrape engagers of LinkedIn posts via an Apify task (or actor). The
+  #      SalesKick task wraps harvestapi/linkedin-profile-posts, which scrapes
+  #      target profiles' posts together with their reactions and comments.
+  #   2. Normalize the engagers (reactors + commenters) into HeyReach leads.
   #   3. Push them into a HeyReach list (which can feed a campaign).
   #
   # Configuration is passed in explicitly so this class stays testable and so
@@ -18,12 +20,16 @@ module LinkedinOutbound
   class EngagementOutbound
     class Error < StandardError; end
 
+    # Record types from the harvestapi scraper that represent an engager.
+    ENGAGER_TYPES = %w[reaction comment].freeze
+
     attr_reader :logger
 
-    # config keys:
-    #   :apify_actor   - Apify actor id, e.g. "apify~linkedin-post-reactions-scraper"
-    #   :post_url      - LinkedIn post URL to pull engagement from
-    #   :actor_input   - (optional) extra input merged into the actor payload
+    # config keys (provide either :apify_task or :apify_actor + :post_url):
+    #   :apify_task    - Apify task id/name, e.g. "vibeyx~saleskick-post-scraper"
+    #   :apify_actor   - Apify actor id (alternative to a task)
+    #   :post_url      - LinkedIn post URL (only used with :apify_actor)
+    #   :actor_input   - (optional) input merged over the task/actor input
     #   :heyreach_list_id - HeyReach list id to add leads to
     #   :dry_run       - if true, scrape + map but do not push to HeyReach
     def initialize(config, apify: nil, heyreach: nil, logger: nil)
@@ -64,23 +70,35 @@ module LinkedinOutbound
 
     def validate!
       missing = []
-      missing << ":apify_actor" if blank?(@config[:apify_actor])
-      missing << ":post_url" if blank?(@config[:post_url])
+      if blank?(@config[:apify_task])
+        missing << ":apify_actor (or :apify_task)" if blank?(@config[:apify_actor])
+        missing << ":post_url" if blank?(@config[:apify_actor]) ? false : blank?(@config[:post_url])
+      end
       missing << ":heyreach_list_id" if !@config[:dry_run] && blank?(@config[:heyreach_list_id])
       raise Error, "Missing required config: #{missing.join(', ')}" unless missing.empty?
     end
 
     def scrape_engagers
-      input = { postUrl: @config[:post_url] }
-      input.merge!(@config[:actor_input]) if @config[:actor_input].is_a?(Hash)
-      @apify.run_and_fetch_items(actor: @config[:apify_actor], input: input)
+      if !blank?(@config[:apify_task])
+        @apify.run_task_and_fetch_items(task: @config[:apify_task], input: @config[:actor_input])
+      else
+        input = { postUrl: @config[:post_url] }
+        input.merge!(@config[:actor_input]) if @config[:actor_input].is_a?(Hash)
+        @apify.run_and_fetch_items(actor: @config[:apify_actor], input: input)
+      end
     end
 
-    # Maps a raw Apify engagement record to a HeyReach lead. Apify actors vary
-    # in their field names, so we probe a set of common keys. A lead is only
-    # usable if we can find a LinkedIn profile URL.
+    # Maps a raw Apify dataset record to a HeyReach lead. The harvestapi scraper
+    # emits flat records of type reaction/comment/post, with the engager nested
+    # under `actor`. We only keep engagers (reaction/comment) and require a
+    # LinkedIn profile URL. Falls back to top-level fields for other actors.
     def to_heyreach_lead(record)
-      profile_url = dig_first(record, %w[profileUrl profile_url linkedinUrl linkedin_url url publicProfileUrl])
+      type = record["type"] || record[:type]
+      return nil if type && !ENGAGER_TYPES.include?(type)
+
+      record = record["actor"] || record[:actor] || record
+
+      profile_url = dig_first(record, %w[linkedinUrl linkedin_url profileUrl profile_url url publicProfileUrl])
       return nil if blank?(profile_url)
 
       first = dig_first(record, %w[firstName first_name givenName])
