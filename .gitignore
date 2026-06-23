@@ -15,3 +15,8 @@
 /log/*
 !/log/.keep
 /tmp
+
+# Local secrets / credentials (never commit API keys).
+/.env
+/.env.*
+!/.env.example

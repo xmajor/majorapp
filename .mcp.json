@@ -1,0 +1,11 @@
+{
+  "mcpServers": {
+    "heyreach": {
+      "type": "http",
+      "url": "REPLACE_WITH_HEYREACH_MCP_CONNECTION_URL",
+      "headers": {
+        "X-API-KEY": "${HEYREACH_MCP_KEY}"
+      }
+    }
+  }
+}
